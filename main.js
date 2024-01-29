@@ -5,6 +5,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls";
 
 import { WorldMapClass } from "./map.js"
 import { Player } from "./player.js"
+import { Enemy } from "./enemy.js"
 
 
 let stats;
@@ -59,6 +60,7 @@ let plane;
 
 let worldMapClass = new WorldMapClass();
 let playerClass = new Player();
+let enemyClass = new Enemy();
 
 let dirTap; // след от мышки на карте
 
@@ -93,6 +95,11 @@ function init() {
   
   worldMapClass.loadingMap(THREE, scene); 
   playerClass.addPlayer(scene);
+  enemyClass.addEnemy(scene);
+  
+
+  enemyClass.idleEnemy(enemyClass.enemy);
+  
  
 };
 
@@ -102,6 +109,7 @@ init();
 
 function animate() {
   
+  //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
   controls.update();
     
 };
@@ -166,7 +174,7 @@ function onDocumentMouseDown( event ) {
 
 
     
-        
+ 
     var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
     
     worldMapClass.worldMap.forEach((n, i) => {
@@ -178,7 +186,7 @@ function onDocumentMouseDown( event ) {
     });
 
     var path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(playerClass.player.position.x/10)), Math.trunc(Math.abs(playerClass.player.position.y/10)), Math.trunc(Math.abs(intersects.x/10)), Math.trunc(Math.abs(intersects.y/10)), grid);
-    console.log(path)
+    //console.log(path);
 
     var ii = 0;
     setInterval(function(){
