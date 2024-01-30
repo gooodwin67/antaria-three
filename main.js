@@ -98,7 +98,7 @@ function init() {
   enemyClass.addEnemy(scene);
   
 
-  enemyClass.idleEnemy(enemyClass.enemy);
+  enemyClass.idleEnemy(enemyClass.enemies);
   
  
 };
@@ -179,7 +179,7 @@ function onDocumentMouseDown( event ) {
     
     worldMapClass.worldMap.forEach((n, i) => {
       n.forEach((b, j) => {
-          if (worldMapClass.worldMap[i][j] == '0') {
+          if (worldMapClass.worldMap[i][j].map == '0') {
             grid.setWalkableAt(j, i, false);
           }
       });
@@ -192,14 +192,17 @@ function onDocumentMouseDown( event ) {
     setInterval(function(){
 
       if (ii<path.length) {
+        
+        if (ii-1 >= 0) delete worldMapClass.worldMap[path[ii-1][1]][path[ii-1][0]].player;
         playerClass.player.position.x = path[ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
         playerClass.player.position.y = -path[ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
+        worldMapClass.worldMap[path[ii][1]][path[ii][0]].player = true;
         ii++
       }
-      
+     
     }, 200)
+    console.log(worldMapClass.worldMap) 
     
-
   }
 }
   

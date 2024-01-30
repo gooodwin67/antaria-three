@@ -10,7 +10,13 @@ export class Player {
 
   addPlayer (scene){
     this.player = new THREE.Mesh( this.geometryPlayer, this.materialPlayer );
-    this.player.position.set(worldMapClass.worldSettings.sizeOneBlock+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock-worldMapClass.worldSettings.sizeOneBlock/2,0);
+    for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
+      for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
+        if (worldMapClass.worldMap[i][j].player) {
+          this.player.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+        }
+      }
+    }
     scene.add( this.player );
   }
 }

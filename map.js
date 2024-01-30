@@ -2,18 +2,20 @@ import { TIFFLoader } from 'three/addons/loaders/TIFFLoader.js';
 
 export class WorldMapClass {
 
-    worldMap = [
-        ['0','0','0','0','0','0','0','0','0','0'],
-        ['0','g','0','g','g','g','g','g','g','0'],
-        ['0','g','g','g','g','g','g','0','g','0'],
-        ['0','g','g','g','g','g','g','g','g','0'],
-        ['0','g','g','g','g','0','g','g','g','0'],
-        ['0','g','g','g','0','g','0','g','g','0'],
-        ['0','g','g','0','g','0','0','g','g','0'],
-        ['0','g','g','g','g','g','0','g','g','0'],
-        ['0','g','g','g','g','g','g','g','g','0'],
-        ['0','0','0','0','0','0','0','0','0','0'],
-      ]
+  worldMap = [
+    [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g', player: true},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'0'}],
+    [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+  ]
+
+
       
       worldSettings = {
         sizeX: this.worldMap[0].length, 
@@ -41,12 +43,12 @@ export class WorldMapClass {
       
           for (let i = 0; i < this.worldSettings.sizeX; i++) {
             for (let j = 0; j < this.worldSettings.sizeY; j++) {
-              if (this.worldMap[i][j] == 'g') {
+              if (this.worldMap[i][j].map == 'g') {
                 let grassClone = grass.clone();
                 grassClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
                 scene.add( grassClone );      
               }
-              else if (this.worldMap[i][j] == '0') {
+              else if (this.worldMap[i][j].map == '0') {
                 let wallClone = wall.clone();
                 wallClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
                 scene.add( wallClone );      

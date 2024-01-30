@@ -7,51 +7,70 @@ let worldMapClass = new WorldMapClass();
 export class Enemy {
   geometryEnemy = new THREE.BoxGeometry( 4, 4, 5 );
   materialEnemy = new THREE.MeshPhongMaterial( { color: 0x000000 } );
-  enemy = new THREE.Mesh;
+  enemy = new THREE.Mesh( this.geometryEnemy, this.materialEnemy );
+  enemies = [];
 
   addEnemy (scene){
-    this.enemy = new THREE.Mesh( this.geometryEnemy, this.materialEnemy );
-    this.enemy.position.set(worldMapClass.worldSettings.sizeOneBlock*8+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*8-worldMapClass.worldSettings.sizeOneBlock/2,0);
-    scene.add( this.enemy );
-    
+
+    for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
+      for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
+        if (worldMapClass.worldMap[i][j].enemy) {
+          let newEnemy = this.enemy.clone();
+          newEnemy.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+          this.enemies.push(newEnemy);
+          scene.add( newEnemy );
+        }
+      }
+    }
+        
   }
 
-  idleEnemy(enemy) {
+  idleEnemy(enemies) {
     var ii = 0;
-    
-    setInterval(function(){
-      let masNewPos = [];
+    enemies.forEach(el => {
+      
+      setInterval(function(){
+        let masNewPos = [];
+  
+        
+        
+        if (worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))-1].map == 'g') {
+          masNewPos.push([Math.trunc(Math.abs(el.position.x/10))-1, Math.trunc(Math.abs(el.position.y/10))]);
+        }
+        if (worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))+1].map == 'g') {
+          masNewPos.push([Math.trunc(Math.abs(el.position.x/10))+1, Math.trunc(Math.abs(el.position.y/10))]);
+        }
+        if (worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))-1][Math.trunc(Math.abs(el.position.x/10))].map == 'g') {
+          masNewPos.push([Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10))-1]);
+        }
+        if (worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))+1][Math.trunc(Math.abs(el.position.x/10))].map == 'g') {
+          masNewPos.push([Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10))+1]);
+        }
+  
+      
+        let rand = randomIntFromInterval(0,masNewPos.length-1)
+        let newPath = masNewPos[rand];
+  
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
 
-      
-      
-      if (worldMapClass.worldMap[Math.trunc(Math.abs(enemy.position.y/10))][Math.trunc(Math.abs(enemy.position.x/10))-1] == 'g') {
-        masNewPos.push([Math.trunc(Math.abs(enemy.position.x/10))-1, Math.trunc(Math.abs(enemy.position.y/10))]);
-      }
-      if (worldMapClass.worldMap[Math.trunc(Math.abs(enemy.position.y/10))][Math.trunc(Math.abs(enemy.position.x/10))+1] == 'g') {
-        masNewPos.push([Math.trunc(Math.abs(enemy.position.x/10))+1, Math.trunc(Math.abs(enemy.position.y/10))]);
-      }
-      if (worldMapClass.worldMap[Math.trunc(Math.abs(enemy.position.y/10))-1][Math.trunc(Math.abs(enemy.position.x/10))] == 'g') {
-        masNewPos.push([Math.trunc(Math.abs(enemy.position.x/10)), Math.trunc(Math.abs(enemy.position.y/10))-1]);
-      }
-      if (worldMapClass.worldMap[Math.trunc(Math.abs(enemy.position.y/10))+1][Math.trunc(Math.abs(enemy.position.x/10))] == 'g') {
-        masNewPos.push([Math.trunc(Math.abs(enemy.position.x/10)), Math.trunc(Math.abs(enemy.position.y/10))+1]);
-      }
+        el.position.x = newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
+        el.position.y = -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
 
-    
-      let rand = randomIntFromInterval(0,masNewPos.length-1)
-      let newPath = masNewPos[rand];
+        worldMapClass.worldMap[newPath[1]][newPath[0]].enemy = true;
+          // ii++
 
-      
-        enemy.position.x = newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
-        enemy.position.y = -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
-        // ii++
-      
-      
-    }, 1500)
-    
+          console.log(worldMapClass.worldMap);/*///////////////////////////////////////////////////////////////////////////////////////////////////////*/
+        
+        
+      }, 500)
+
+    });
     
     
     
 
   }
+
+
+  
 }
