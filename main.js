@@ -14,6 +14,8 @@ let stats;
 let mouse = new THREE.Vector2();
 let raycaster = new THREE.Raycaster();
 
+let testBlock;
+
 let scene = new THREE.Scene();
 //scene.fog = new THREE.Fog(0xffffff);
 scene.background = new THREE.Color( 0x444444 );
@@ -58,7 +60,7 @@ controls.target.set(50, -50, 0);
 
 let plane;
 
-let worldMapClass = new WorldMapClass();
+export let worldMapClass = new WorldMapClass();
 let playerClass = new Player();
 let enemyClass = new Enemy();
 
@@ -99,6 +101,15 @@ function init() {
   
 
   enemyClass.idleEnemy(enemyClass.enemies);
+
+
+  
+
+  const testBlockGeometry = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeOneBlock, 1 );
+  const testBlockMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 1 } );
+  testBlock = new THREE.Mesh( testBlockGeometry, testBlockMaterial );
+  
+  scene.add( testBlock );
   
  
 };
@@ -108,6 +119,18 @@ init();
 /*///////////////////////////////////////////////////////////////////*/
 
 function animate() {
+
+  // worldMapClass.worldMap.forEach((n, i) => {
+  //   n.forEach((b, j) => {
+  //       if (worldMapClass.worldMap[i][j].enemy) {
+          
+  //         testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
+  //         //console.log(`${i}---${j}`)
+          
+  //       }
+  //   });
+  // });
+  
   
   //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
   controls.update();

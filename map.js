@@ -14,6 +14,20 @@ export class WorldMapClass {
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'0'}],
     [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
   ]
+  // worldMap = [
+  //   [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+  //   [{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g', player: true},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'0', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'0'}],
+  //   [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+  // ]
+
+
 
 
       
