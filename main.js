@@ -109,7 +109,7 @@ function init() {
   const testBlockMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 1 } );
   testBlock = new THREE.Mesh( testBlockGeometry, testBlockMaterial );
   
-  scene.add( testBlock );
+  //scene.add( testBlock );
   
  
 };
