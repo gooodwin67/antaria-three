@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 
+
 import { OrbitControls } from "three/addons/controls/OrbitControls";
 
 import { WorldMapClass } from "./map.js"
@@ -9,6 +10,8 @@ import { Enemy } from "./enemy.js"
 
 
 let stats;
+
+
 
 
 let mouse = new THREE.Vector2();
@@ -34,6 +37,8 @@ window.addEventListener("resize", (event) => {
 });
 stats = new Stats();
 document.body.appendChild( stats.dom );
+
+
 
 let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1000);
 camera.position.set(50, -50, 300);
@@ -100,7 +105,7 @@ function init() {
   enemyClass.addEnemy(scene);
   
 
-  enemyClass.idleEnemy(enemyClass.enemies);
+  // enemyClass.idleEnemy(enemyClass.enemies);
 
 
   
@@ -118,7 +123,13 @@ init();
 
 /*///////////////////////////////////////////////////////////////////*/
 
-function animate() {
+function animate( ) {
+
+  
+
+  
+
+  enemyClass.idleEnemy(enemyClass.enemies);
 
   // worldMapClass.worldMap.forEach((n, i) => {
   //   n.forEach((b, j) => {
@@ -194,40 +205,16 @@ function onDocumentMouseDown( event ) {
   
   
   if (intersects) {
-
-
+    playerClass.movePlayer(intersects);
     
- 
-    var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
     
-    worldMapClass.worldMap.forEach((n, i) => {
-      n.forEach((b, j) => {
-          if (worldMapClass.worldMap[i][j].map == '0') {
-            grid.setWalkableAt(j, i, false);
-          }
-      });
-    });
-
-    var path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(playerClass.player.position.x/10)), Math.trunc(Math.abs(playerClass.player.position.y/10)), Math.trunc(Math.abs(intersects.x/10)), Math.trunc(Math.abs(intersects.y/10)), grid);
-    //console.log(path);
-
-    var ii = 0;
-    setInterval(function(){
-
-      if (ii<path.length) {
-        
-        if (ii-1 >= 0) delete worldMapClass.worldMap[path[ii-1][1]][path[ii-1][0]].player;
-        playerClass.player.position.x = path[ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
-        playerClass.player.position.y = -path[ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
-        worldMapClass.worldMap[path[ii][1]][path[ii][0]].player = true;
-        ii++
-      }
-     
-    }, 200)
-    console.log(worldMapClass.worldMap) 
+    
+    
     
   }
 }
+
+
   
 
 

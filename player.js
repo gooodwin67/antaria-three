@@ -19,4 +19,53 @@ export class Player {
     }
     scene.add( this.player );
   }
+
+  movePlayer(intersects) {
+
+    
+  
+    var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
+      
+      worldMapClass.worldMap.forEach((n, i) => {
+        n.forEach((b, j) => {
+            if (worldMapClass.worldMap[i][j].map == '0') {
+              grid.setWalkableAt(j, i, false);
+            }
+        });
+      });
+  
+      var path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(intersects.x/10)), Math.trunc(Math.abs(intersects.y/10)), grid);
+      //console.log(path);
+  
+      // var ii = 0;
+      //setInterval(function(){
+  
+        //if (ii<path.length) {
+
+          console.log(path)
+          
+            let ii = 1;
+            //if (ii-1 >= 0) delete worldMapClass.worldMap[path[ii-1][1]][path[ii-1][0]].player;
+            //this.player.position.x = path[ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
+            //this.player.position.y = -path[ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
+            let goPlayer = gsap.to( this.player.position, {
+              duration: 1,
+              x: path[ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
+              y: -path[ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
+              z: 0,
+            }).then((goPlayer)=>{
+              ii++;
+              goPlayer.restart();
+            });
+
+            
+            
+            //worldMapClass.worldMap[path[ii][1]][path[ii][0]].player = true;
+          
+          //ii++
+        //}
+       
+      //}, 200)
+  
+  }
 }
