@@ -127,7 +127,7 @@ function animate( ) {
 
   
 
-  
+  if (playerClass.playerRun) playerClass.movePlayer();
 
   enemyClass.idleEnemy(enemyClass.enemies);
 
@@ -205,7 +205,8 @@ function onDocumentMouseDown( event ) {
   
   
   if (intersects) {
-    playerClass.movePlayer(intersects);
+    
+    playerClass.setPlayerRun(intersects);
     
     
     
