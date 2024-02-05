@@ -17,6 +17,7 @@ export class Enemy {
       for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
         if (worldMapClass.worldMap[i][j].enemy) {
           let newEnemy = this.enemy.clone();
+          newEnemy.userData.speed = 2;
           newEnemy.userData.delta = 0;
           newEnemy.userData.time = 0;
           newEnemy.userData.clock = new THREE.Clock();
@@ -32,7 +33,7 @@ export class Enemy {
   
 
 
-  idleEnemy(enemies) {
+  idleEnemy(enemies, TWEEN) {
     
     
 
@@ -45,7 +46,7 @@ export class Enemy {
       el.userData.time += el.userData.delta;
       
 
-      if (el.userData.time >= 2) {
+      if (el.userData.time >= el.userData.speed) {
         
         let masNewPos = [];
 
@@ -72,26 +73,16 @@ export class Enemy {
         if (masNewPos.length>0) {
 
           delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+          
 
-          //el.position.x = newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
-          //el.position.y = -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2;
+          new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start()
 
-          gsap.to( el.position, {
-            duration: 1,
-            x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
-            y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
-            z: 0
-          } );
+          
 
 
           worldMapClass.worldMap[newPath[1]][newPath[0]].enemy = true;
         }
-        
-        
-        
-          // ii++
 
-          //console.log(worldMapClass.worldMap);/*///////////////////////////////////////////////////////////////////////////////////////////////////////*/
         
           el.userData.time = 0;
 

@@ -1,14 +1,17 @@
-import { WorldMapClass } from "./map.js"
+import { worldMapClass } from "./main.js";
 import * as THREE from 'three';
 
-let worldMapClass = new WorldMapClass();
+
 
 export class Player {
   geometryPlayer = new THREE.BoxGeometry( 4, 4, 5 );
   materialPlayer = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
   player = new THREE.Mesh;
-  playerRun = false;
-  playerPathCalc = false;
+  playerRuninig = false;
+  playerCanRun = false;
+  playerTouch = false;
+  playerTween;
+  
   intersects;
   path = [];
   ii = 1;
@@ -26,18 +29,28 @@ export class Player {
   }
 
   setPlayerRun(intersects) {
-    this.path = [];
-    this.playerRun = true;
-    this.playerPathCalc = true;
-    this.intersects = intersects;
-    this.ii = 1;
+    if (this.path.length < 2) {
+      this.path = [];
+      this.playerTouch = true;
+      this.intersects = intersects;
+    }
+    else  {
+      this.path = [];
+      setTimeout(()=>{
+        this.playerTouch = true;
+        this.intersects = intersects;
+      }, 1000)
+    }
+    
+    
+    
   }
 
-  movePlayer() {
+  movePlayer(TWEEN) {
+
+    if (this.playerTouch) {
 
     
-
-    if (this.playerPathCalc) {
       var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
       
       worldMapClass.worldMap.forEach((n, i) => {
@@ -49,8 +62,18 @@ export class Player {
       });
       
   
-      this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid);
-      this.playerPathCalc = false;
+      this.path = (new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid));
+      console.log(this.path);
+
+      
+
+      
+      this.playerCanRun = true;
+    }
+      
+    if (this.playerCanRun) {
+
+      this.playerTouch = false;
     
 
       //console.log(this.path);
@@ -62,16 +85,40 @@ export class Player {
               //this.player.position.x = this.path[this.ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
               //this.player.position.y = -this.path[this.ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
               
-              let goPlayer = gsap.to( this.player.position, {
-                duration: 2,
-                x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
-                y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
-                z: 0,
-                ease: 'none',
+              // let goPlayer = gsap.to( this.player.position, {
+              //   duration: 2,
+              //   x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
+              //   y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
+              //   z: 0,
+              //   ease: 'none',
+                
+              // });
+              //console.log(this.player.position.x)
+              
+
+              
+              if (!this.playerRuninig) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
+              
+              this.playerTween.start().onComplete(()=>{
+                //delete worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].player;
+                
+                //worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].player = true;
+                worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
+                this.path.splice(1,1);
+                
+                this.playerCanRun = true;
+                this.playerRuninig = false;
+              }).onUpdate(()=>{
+                
+                delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
+                this.playerRuninig = true;
+                this.playerCanRun = false;
                 
               });
-              console.log(goPlayer.isActive())
-              if (goPlayer.ratio == 1) console.log(1)
+              
+              
+              
+              
               
               // if (Math.abs(Math.abs(this.player.position.x) - Math.abs(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2)) < 0.01 && Math.abs(Math.abs(this.player.position.y) - Math.abs(this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2)) < 1) {
                 
@@ -80,7 +127,11 @@ export class Player {
               // }
               
             }
-            else this.playerRun = false;
+            else {
+              //this.path = [];
+              this.playerRuninig = false;
+              
+            }
             
 
             

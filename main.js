@@ -8,6 +8,8 @@ import { WorldMapClass } from "./map.js"
 import { Player } from "./player.js"
 import { Enemy } from "./enemy.js"
 
+import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
+
 
 let stats;
 
@@ -114,7 +116,7 @@ function init() {
   const testBlockMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 1 } );
   testBlock = new THREE.Mesh( testBlockGeometry, testBlockMaterial );
   
-  //scene.add( testBlock );
+  scene.add( testBlock );
   
  
 };
@@ -127,20 +129,20 @@ function animate( ) {
 
   
 
-  if (playerClass.playerRun) playerClass.movePlayer();
+  playerClass.movePlayer(TWEEN);
 
-  enemyClass.idleEnemy(enemyClass.enemies);
+  enemyClass.idleEnemy(enemyClass.enemies, TWEEN);
 
-  // worldMapClass.worldMap.forEach((n, i) => {
-  //   n.forEach((b, j) => {
-  //       if (worldMapClass.worldMap[i][j].enemy) {
+  worldMapClass.worldMap.forEach((n, i) => {
+    n.forEach((b, j) => {
+        if (worldMapClass.worldMap[i][j].player) {
           
-  //         testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
-  //         //console.log(`${i}---${j}`)
+          testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
+          //console.log(`${i}---${j}`)
           
-  //       }
-  //   });
-  // });
+        }
+    });
+  });
   
   
   //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
@@ -159,6 +161,7 @@ document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 renderer.setAnimationLoop((_) => {
     
     animate();
+    TWEEN.update();
     stats.update();
     renderer.render(scene, camera);
 });
