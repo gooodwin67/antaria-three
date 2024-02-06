@@ -8,7 +8,7 @@ import { WorldMapClass } from "./map.js"
 import { Player } from "./player.js"
 import { Enemy } from "./enemy.js"
 
-import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
+import { TWEEN } from './libs/tween.module.min.js';
 
 
 let stats;

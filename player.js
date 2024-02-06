@@ -1,5 +1,6 @@
 import { worldMapClass } from "./main.js";
 import * as THREE from 'three';
+import { TWEEN } from './libs/tween.module.min.js';
 
 
 
@@ -10,7 +11,7 @@ export class Player {
   playerRuninig = false;
   playerCanRun = false;
   playerTouch = false;
-  playerTween;
+  playerTween = new TWEEN.Tween;
   
   intersects;
   path = [];
@@ -63,15 +64,18 @@ export class Player {
       
   
       this.path = (new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid));
-      console.log(this.path);
+      //console.log(this.path);
 
       
 
       
       this.playerCanRun = true;
-    }
       
-    if (this.playerCanRun) {
+    }
+    
+      
+    if (this.playerCanRun && !this.playerTween.isPlaying()) {
+      
 
       this.playerTouch = false;
     
@@ -94,7 +98,10 @@ export class Player {
                 
               // });
               //console.log(this.player.position.x)
-              
+              let backPosition;
+              let newPosition;
+              backPosition = this.path[0];
+              newPosition = this.path[1];
 
               
               if (!this.playerRuninig) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
@@ -104,10 +111,19 @@ export class Player {
                 
                 //worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].player = true;
                 worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
-                this.path.splice(1,1);
+
                 
+                
+                
+                this.path.splice(1,1);
                 this.playerCanRun = true;
                 this.playerRuninig = false;
+                if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если на идем на одну клетку
+                  this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
+                  delete worldMapClass.worldMap[newPosition[1]][newPosition[0]].player
+                  worldMapClass.worldMap[backPosition[1]][backPosition[0]].player = true;
+                  this.playerCanRun = false;
+                }
               }).onUpdate(()=>{
                 
                 delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
@@ -115,6 +131,8 @@ export class Player {
                 this.playerCanRun = false;
                 
               });
+
+              
               
               
               
