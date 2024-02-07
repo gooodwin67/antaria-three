@@ -104,7 +104,7 @@ function init() {
   
   worldMapClass.loadingMap(THREE, scene); 
   playerClass.addPlayer(scene);
-  enemyClass.addEnemy(scene);
+  enemyClass.addEnemy(scene, TWEEN);
   
 
   // enemyClass.idleEnemy(enemyClass.enemies);
@@ -131,11 +131,11 @@ function animate( ) {
 
   playerClass.movePlayer(TWEEN);
 
-  enemyClass.idleEnemy(enemyClass.enemies, TWEEN);
+  enemyClass.idleEnemy(enemyClass.enemies, TWEEN, playerClass.player);
 
   worldMapClass.worldMap.forEach((n, i) => {
     n.forEach((b, j) => {
-        if (worldMapClass.worldMap[i][j].player) {
+        if (worldMapClass.worldMap[i][j].enemy) {
           
           testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
           //console.log(`${i}---${j}`)

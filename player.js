@@ -63,8 +63,8 @@ export class Player {
       });
       
   
-      this.path = (new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid));
-      //console.log(this.path);
+      this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid);
+      //console.log(grid);
 
       
 
@@ -118,7 +118,7 @@ export class Player {
                 this.path.splice(1,1);
                 this.playerCanRun = true;
                 this.playerRuninig = false;
-                if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если на идем на одну клетку
+                if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если идем на одну клетку
                   this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
                   delete worldMapClass.worldMap[newPosition[1]][newPosition[0]].player
                   worldMapClass.worldMap[backPosition[1]][backPosition[0]].player = true;
