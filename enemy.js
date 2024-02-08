@@ -27,6 +27,7 @@ export class Enemy {
           newEnemy.userData.clock = new THREE.Clock();
 
           newEnemy.userData.enemyCanRun = true;
+          newEnemy.userData.enemyCanPath = false;
           newEnemy.userData.path = [];
           newEnemy.userData.enemyTween = new TWEEN.Tween;
 
@@ -57,49 +58,39 @@ export class Enemy {
       
 
       if (el.userData.time >= el.userData.speed) {
-
-        if (el.position.distanceTo(player.position) > this.distanceToWatchPlayer || el.userData.path == []) {
         
-          let masNewPos = [];
-          el.userData.path = [];
-
-          let yPos = Math.trunc(Math.abs(el.position.y/10));
-          let xPos = Math.trunc(Math.abs(el.position.x/10));
-          
-          if (worldMapClass.worldMap[yPos][xPos-1].map == 'g' && !worldMapClass.worldMap[yPos][xPos-1].player && !worldMapClass.worldMap[yPos][xPos-1].enemy) {
-            masNewPos.push([xPos-1, yPos]);
-          }
-          if (worldMapClass.worldMap[yPos][xPos+1].map == 'g' && !worldMapClass.worldMap[yPos][xPos+1].player && !worldMapClass.worldMap[yPos][xPos+1].enemy) {
-            masNewPos.push([xPos+1, yPos]);
-          }
-          if (worldMapClass.worldMap[yPos-1][xPos].map == 'g' && !worldMapClass.worldMap[yPos-1][xPos].player && !worldMapClass.worldMap[yPos-1][xPos].enemy) {
-            masNewPos.push([xPos, yPos-1]);
-          }
-          if (worldMapClass.worldMap[yPos+1][xPos].map == 'g' && !worldMapClass.worldMap[yPos+1][xPos].player && !worldMapClass.worldMap[yPos+1][xPos].enemy) {
-            masNewPos.push([xPos, yPos+1]);
-          }
-
         
-          let rand = randomIntFromInterval(0,masNewPos.length-1)
-          let newPath = masNewPos[rand];
-
-          if (masNewPos.length>0) {
-
-            delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        
+        if (el.position.distanceTo(player.position) > this.distanceToWatchPlayer || !el.userData.enemyCanPath) {
+          if (!el.userData.enemyCanPath) {
+            var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
             
+            worldMapClass.worldMap.forEach((n, i) => {
+              n.forEach((b, j) => {
+                  if (worldMapClass.worldMap[i][j].map == '0' || worldMapClass.worldMap[i][j].enemy) {
+                    grid.setWalkableAt(j, i, false);
+                  }
+              });
+            });
 
-            new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start()
-
+            el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
             
+            if (el.userData.path.length == 0) {
+              
+            this.enemyIdle(el, TWEEN);
+            }
+            else {
+              el.userData.enemyCanPath = true;
+            }
 
-
-            worldMapClass.worldMap[newPath[1]][newPath[0]].enemy = true;
+          }
+          else {
+            this.enemyIdle(el, TWEEN);
           }
 
-          
-            el.userData.time = 0;
         }
         else {
+          
           this.runEnemyToPlayer(el, player, TWEEN)
         }
 
@@ -108,6 +99,49 @@ export class Enemy {
 
     });
     
+
+  }
+
+  enemyIdle(el, TWEEN) {
+    let masNewPos = [];
+      el.userData.path = [];
+
+      let yPos = Math.trunc(Math.abs(el.position.y/10));
+      let xPos = Math.trunc(Math.abs(el.position.x/10));
+      
+      if (worldMapClass.worldMap[yPos][xPos-1].map == 'g' && !worldMapClass.worldMap[yPos][xPos-1].player && !worldMapClass.worldMap[yPos][xPos-1].enemy) {
+        masNewPos.push([xPos-1, yPos]);
+      }
+      if (worldMapClass.worldMap[yPos][xPos+1].map == 'g' && !worldMapClass.worldMap[yPos][xPos+1].player && !worldMapClass.worldMap[yPos][xPos+1].enemy) {
+        masNewPos.push([xPos+1, yPos]);
+      }
+      if (worldMapClass.worldMap[yPos-1][xPos].map == 'g' && !worldMapClass.worldMap[yPos-1][xPos].player && !worldMapClass.worldMap[yPos-1][xPos].enemy) {
+        masNewPos.push([xPos, yPos-1]);
+      }
+      if (worldMapClass.worldMap[yPos+1][xPos].map == 'g' && !worldMapClass.worldMap[yPos+1][xPos].player && !worldMapClass.worldMap[yPos+1][xPos].enemy) {
+        masNewPos.push([xPos, yPos+1]);
+      }
+
+    
+      let rand = randomIntFromInterval(0,masNewPos.length-1)
+      let newPath = masNewPos[rand];
+
+      if (masNewPos.length>0) {
+
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        
+
+        new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start()
+
+        
+
+
+        worldMapClass.worldMap[newPath[1]][newPath[0]].enemy = true;
+      }
+
+      
+        el.userData.time = 0;
+
 
   }
 
@@ -124,13 +158,23 @@ export class Enemy {
     });
     
     
+    
 
+    
+    
     if (el.userData.enemyCanRun && el.position.distanceTo(player.position) > 11) {
       
       el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
+
+      if (el.userData.path.length == 0) el.userData.enemyCanPath = false;
+
+      let newPosition = el.userData.path[1];
+      
       
 
       if (el.userData.path.length>0) {
+
+        
 
         delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
 
@@ -142,11 +186,16 @@ export class Enemy {
           setTimeout(()=>{
             el.userData.enemyCanRun = true;
             el.userData.path = [];
+            el.userData.enemyCanPath = false;
           }, 500)
           
         })
+        el.userData.enemyTween.onUpdate(()=>{
+          el.userData.enemyCanRun = false;
+          el.userData.enemyCanPath = true;
+        });
       }
-      el.userData.enemyCanRun = false;
+      
       
       
       

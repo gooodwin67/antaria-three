@@ -12,6 +12,8 @@ export class Player {
   playerCanRun = false;
   playerTouch = false;
   playerTween = new TWEEN.Tween;
+
+  playerInBattle = false;
   
   intersects;
   path = [];
@@ -61,9 +63,16 @@ export class Player {
             }
         });
       });
+
+      if (!worldMapClass.worldMap[Math.trunc(Math.abs(this.intersects.y/10))][Math.trunc(Math.abs(this.intersects.x/10))].enemy) {
+        this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid);
+      }
+      
+
+      
       
   
-      this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid);
+      
       //console.log(grid);
 
       
@@ -101,17 +110,18 @@ export class Player {
               let backPosition;
               let newPosition;
               backPosition = this.path[0];
+              this.path[0] = this.path[1];
               newPosition = this.path[1];
 
               
-              if (!this.playerRuninig) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
+              if (!this.playerRuninig && !worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].enemy) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
+
+              
               
               this.playerTween.start().onComplete(()=>{
-                //delete worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].player;
                 
-                //worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].player = true;
                 worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
-
+                if (!worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
                 
                 
                 
@@ -126,7 +136,7 @@ export class Player {
                 }
               }).onUpdate(()=>{
                 
-                delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
+                //delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
                 this.playerRuninig = true;
                 this.playerCanRun = false;
                 

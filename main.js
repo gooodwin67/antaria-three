@@ -135,7 +135,7 @@ function animate( ) {
 
   worldMapClass.worldMap.forEach((n, i) => {
     n.forEach((b, j) => {
-        if (worldMapClass.worldMap[i][j].enemy) {
+        if (worldMapClass.worldMap[i][j].player) {
           
           testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
           //console.log(`${i}---${j}`)
