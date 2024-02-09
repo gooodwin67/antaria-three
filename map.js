@@ -27,6 +27,12 @@ export class WorldMapClass {
     [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
   ]
 
+  worldMap = [
+    [{map:'0'},{map:'0'},{map:'0'},],
+    [{map:'0'},{map:'0'},{map:'0'},],
+    [{map:'0'},{map:'0'},{map:'0'},]
+  ]
+
 
 
 

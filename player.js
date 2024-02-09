@@ -116,7 +116,7 @@ export class Player {
               
               if (!this.playerRuninig && !worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].enemy) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
 
-              
+              delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
               
               this.playerTween.start().onComplete(()=>{
                 
@@ -130,8 +130,8 @@ export class Player {
                 this.playerRuninig = false;
                 if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если идем на одну клетку
                   this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
-                  delete worldMapClass.worldMap[newPosition[1]][newPosition[0]].player
-                  worldMapClass.worldMap[backPosition[1]][backPosition[0]].player = true;
+                  delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
+                  worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
                   this.playerCanRun = false;
                 }
               }).onUpdate(()=>{
@@ -139,6 +139,7 @@ export class Player {
                 //delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
                 this.playerRuninig = true;
                 this.playerCanRun = false;
+                worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
                 
               });
 

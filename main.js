@@ -136,8 +136,9 @@ function animate( ) {
   worldMapClass.worldMap.forEach((n, i) => {
     n.forEach((b, j) => {
         if (worldMapClass.worldMap[i][j].player) {
+          let testblock1 = testBlock.clone();
           
-          testBlock.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
+          testblock1.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
           //console.log(`${i}---${j}`)
           
         }
