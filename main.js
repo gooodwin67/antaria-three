@@ -128,10 +128,10 @@ init();
 function animate( ) {
 
   
-
+  //console.log(enemyClass.enemies[0].userData.inBattle);
   playerClass.movePlayer(TWEEN);
 
-  enemyClass.idleEnemy(enemyClass.enemies, TWEEN, playerClass.player);
+  enemyClass.idleEnemy(enemyClass.enemies, TWEEN, playerClass.player, playerClass);
 
   worldMapClass.worldMap.forEach((n, i) => {
     n.forEach((b, j) => {

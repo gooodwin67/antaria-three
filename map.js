@@ -14,24 +14,22 @@ export class WorldMapClass {
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g'},{map:'0'}],
     [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
   ]
-  worldMap = [
-    [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
-    [{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g', player: true},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'0', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'0'}],
-    [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'0'}],
-    [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
-  ]
+  // worldMap = [
+  //   [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+  //   [{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g', player: true},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'0', enemy: true},{map:'g', enemy: true},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g', enemy: true},{map:'0'},{map:'g', enemy: true},{map:'0'},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'0'}],
+  //   [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'0'}],
+  //   [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
+  // ]
 
-  worldMap = [
-    [{map:'0'},{map:'0'},{map:'0'},],
-    [{map:'0'},{map:'0'},{map:'0'},],
-    [{map:'0'},{map:'0'},{map:'0'},]
-  ]
+  
+
+
 
 
 
@@ -45,13 +43,16 @@ export class WorldMapClass {
 
       loadingMap(THREE, scene) {
 
-        let geometry = new THREE.BoxGeometry( this.worldSettings.sizeX, this.worldSettings.sizeY, 0.2 ); 
+        let geometry = new THREE.BoxGeometry( this.worldSettings.sizeOneBlock, this.worldSettings.sizeOneBlock, 0.2 ); 
       
         const loadMngr = new THREE.LoadingManager();
         const loader = new TIFFLoader(loadMngr);
       
         let grassTexture = loader.load('assets/map/grass.tif');
         let wallTexture = loader.load('assets/map/wall.tif');
+
+
+        
       
         loadMngr.onLoad = () => {
           let grassMaterial = new THREE.MeshBasicMaterial( { map: grassTexture } );

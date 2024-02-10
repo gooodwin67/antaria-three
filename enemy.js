@@ -21,6 +21,7 @@ export class Enemy {
       for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
         if (worldMapClass.worldMap[i][j].enemy) {
           let newEnemy = this.enemy.clone();
+
           newEnemy.userData.speed = 2+Math.random();
           newEnemy.userData.delta = 0;
           newEnemy.userData.time = 0;
@@ -30,6 +31,8 @@ export class Enemy {
           newEnemy.userData.enemyCanPath = false;
           newEnemy.userData.path = [];
           newEnemy.userData.enemyTween = new TWEEN.Tween;
+
+          newEnemy.userData.inBattle = false;
 
 
           newEnemy.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
@@ -44,7 +47,7 @@ export class Enemy {
   
 
 
-  idleEnemy(enemies, TWEEN, player) {
+  idleEnemy(enemies, TWEEN, player, playerClass) {
     
     
 
@@ -91,7 +94,7 @@ export class Enemy {
         }
         else {
           
-          this.runEnemyToPlayer(el, player, TWEEN)
+          this.runEnemyToPlayer(el, player, TWEEN, playerClass)
         }
 
       }
@@ -103,6 +106,9 @@ export class Enemy {
   }
 
   enemyIdle(el, TWEEN) {
+
+    el.userData.inBattle = false;
+
     let masNewPos = [];
       el.userData.path = [];
 
@@ -145,7 +151,7 @@ export class Enemy {
 
   }
 
-  runEnemyToPlayer(el, player, TWEEN) {
+  runEnemyToPlayer(el, player, TWEEN, playerClass) {
     
     var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
       
@@ -163,6 +169,8 @@ export class Enemy {
     
     
     if (el.userData.enemyCanRun && el.position.distanceTo(player.position) > 11) {
+
+      el.userData.inBattle = false;
       
       el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
 
@@ -199,6 +207,11 @@ export class Enemy {
       
       
       
+    }
+    else if (el.position.distanceTo(player.position) < 11) {
+      
+      if (!el.userData.inBattle) playerClass.setPlayerInBattle(el.id);
+      el.userData.inBattle = true;
     }
     
 

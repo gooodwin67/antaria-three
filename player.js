@@ -14,6 +14,9 @@ export class Player {
   playerTween = new TWEEN.Tween;
 
   playerInBattle = false;
+  playerInBattleId = 0;
+
+  
   
   intersects;
   path = [];
@@ -42,11 +45,16 @@ export class Player {
       setTimeout(()=>{
         this.playerTouch = true;
         this.intersects = intersects;
-      }, 1000)
+      }, 100)
     }
-    
-    
-    
+
+  }
+
+  setPlayerInBattle(id) {
+    if (this.playerInBattle == false) {
+      this.playerInBattle = true;
+      this.playerInBattleId = id;
+    }
   }
 
   movePlayer(TWEEN) {
@@ -69,15 +77,7 @@ export class Player {
       }
       
 
-      
-      
-  
-      
-      //console.log(grid);
-
-      
-
-      
+         
       this.playerCanRun = true;
       
     }
@@ -85,98 +85,65 @@ export class Player {
       
     if (this.playerCanRun && !this.playerTween.isPlaying()) {
       
-
       this.playerTouch = false;
-    
+  
+      if (this.path.length>1) {
 
-      //console.log(this.path);
+        let backPosition;
+        let newPosition;
+        backPosition = this.path[0];
+        this.path[0] = this.path[1];
+        newPosition = this.path[1];
+
+        
+        if (!this.playerRuninig && !worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].enemy) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
+
+        delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
+        
+        this.playerTween.start().onComplete(()=>{
+          
+          worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
+          if (!worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
+
+          this.playerInBattle = false;
+          this.playerInBattleID = 0;
           
           
-            
-            //if (ii-1 >= 0) delete worldMapClass.worldMap[path[ii-1][1]][path[ii-1][0]].player;
-            if (this.path.length>1) {
-              //this.player.position.x = this.path[this.ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
-              //this.player.position.y = -this.path[this.ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2; 
-              
-              // let goPlayer = gsap.to( this.player.position, {
-              //   duration: 2,
-              //   x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
-              //   y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
-              //   z: 0,
-              //   ease: 'none',
-                
-              // });
-              //console.log(this.player.position.x)
-              let backPosition;
-              let newPosition;
-              backPosition = this.path[0];
-              this.path[0] = this.path[1];
-              newPosition = this.path[1];
-
-              
-              if (!this.playerRuninig && !worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].enemy) this.playerTween = new TWEEN.Tween(this.player.position).to( { x: this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000)
-
-              delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
-              
-              this.playerTween.start().onComplete(()=>{
-                
-                worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
-                if (!worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
-                
-                
-                
-                this.path.splice(1,1);
-                this.playerCanRun = true;
-                this.playerRuninig = false;
-                if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если идем на одну клетку
-                  this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
-                  delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
-                  worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
-                  this.playerCanRun = false;
-                }
-              }).onUpdate(()=>{
-                
-                //delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
-                this.playerRuninig = true;
-                this.playerCanRun = false;
-                worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
-                
-              });
-
-              
-              
-              
-              
-              
-              
-              // if (Math.abs(Math.abs(this.player.position.x) - Math.abs(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2)) < 0.01 && Math.abs(Math.abs(this.player.position.y) - Math.abs(this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2)) < 1) {
-                
-              //   this.path.splice(1,1);
-              //   console.log(1)
-              // }
-              
-            }
-            else {
-              //this.path = [];
-              this.playerRuninig = false;
-              
-            }
-            
-
-            
-            // goPlayer = gsap.to( this.player.position, {
-            //   duration: 1,
-            //   x: path[ii][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,
-            //   y: -path[ii][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,
-            //   z: 0,
-            
-            // });
-                  
-                  
-            
-            //worldMapClass.worldMap[path[ii][1]][path[ii][0]].player = true;
           
+          this.path.splice(1,1);
+          this.playerCanRun = true;
+          this.playerRuninig = false;
+          if (worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) {  //Уступаем место врагу, если идем на одну клетку
+            this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
+            delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
+            worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
+            this.playerCanRun = false;
+          }
+        }).onUpdate(()=>{
+          
+          //delete worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player;
+          this.playerRuninig = true;
+          this.playerCanRun = false;
+          worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
+          
+        });
+
+      }
+      else {
+
+        this.playerRuninig = false;
+        
+      }
+                      
+    }
+
+    if (this.playerInBattle == true) {
+      this.playerNowBattle();
     }
   
+  }
+
+  playerNowBattle() {
+    console.log(`Бой с ${this.playerInBattleId}`);
   }
 }
