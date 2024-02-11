@@ -144,9 +144,10 @@ export class Player {
       }
                       
     }
-
+    
     if (this.playerInBattle == true) {
       this.playerNowBattle(enemyClass);
+      
     }
   
   }
@@ -156,13 +157,14 @@ export class Player {
     
     
     let enemyInBattle = enemyClass.enemies.find((el)=> el.id == this.playerInBattleId);
+    
       
     $('.enemy_health').text(enemyInBattle.userData.health);
 
     
     let playerPunch;
-
-    if (!this.playerCanPunch) playerPunch = new TWEEN.Tween({playerPower: 0}).to( {playerPower: this.maxplayerPower}, 2000).start().onUpdate(()=>{
+    
+    if (!this.playerCanPunch) playerPunch = new TWEEN.Tween({playerPower: 0}).to( {playerPower: this.maxplayerPower}, 1000).start().onUpdate(()=>{
       //console.log('update');
       this.playerCanPunch = true;
     }).onComplete(()=>{
@@ -171,17 +173,7 @@ export class Player {
       this.playerCanPunch = false;
     })
 
-    // playerPunch.start().onComplete(()=>{
 
-    //   this.playerCanPunch = true;
-      
-    //   playerPunch.playerPower = 0;
-
-    // }).onUpdate(()=>{
-
-    //   this.playerCanPunch = false;
-
-    // })
 
 
     

@@ -33,7 +33,13 @@ export class Enemy {
           newEnemy.userData.enemyTween = new TWEEN.Tween;
 
           newEnemy.userData.inBattle = false;
+          newEnemy.userData.enemyCanPunch = false;
           newEnemy.userData.health = 100;
+
+          newEnemy.userData.enemyPower = 0;
+          newEnemy.userData.maxEnemyPower = 5;
+
+          newEnemy.userData.dead = false;
 
 
           newEnemy.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
@@ -50,17 +56,17 @@ export class Enemy {
 
   idleEnemy(scene, enemies, TWEEN, player, playerClass) {
     
-    
-
-    //console.log(this.time)
 
 
-    enemies.forEach(el => {
+    let livesEnemies = enemies.filter((el) => !el.userData.dead);
+
+
+    livesEnemies.forEach(el => {
 
       el.userData.delta = el.userData.clock.getDelta();
       el.userData.time += el.userData.delta;
       
-
+      
       if (el.userData.time >= el.userData.speed) {
         
         
@@ -81,7 +87,7 @@ export class Enemy {
             
             if (el.userData.path.length == 0) {
               
-            this.enemyIdle(el, TWEEN);
+            this.enemyIdle(scene, el, TWEEN);
             }
             else {
               el.userData.enemyCanPath = true;
@@ -107,10 +113,12 @@ export class Enemy {
   }
 
   enemyIdle(scene, el, TWEEN) {
+    
 
     el.userData.inBattle = false;
-
+    
     let masNewPos = [];
+      
       el.userData.path = [];
 
       let yPos = Math.trunc(Math.abs(el.position.y/10));
@@ -153,6 +161,7 @@ export class Enemy {
   }
 
   runEnemyToPlayer(scene, el, player, TWEEN, playerClass) {
+    el.userData.inBattle = false;
     
     var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
       
@@ -170,7 +179,7 @@ export class Enemy {
     
     
     if (el.userData.enemyCanRun && el.position.distanceTo(player.position) > 11) {
-
+      
       el.userData.inBattle = false;
       
       el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
@@ -214,11 +223,24 @@ export class Enemy {
       if (!el.userData.inBattle) playerClass.setPlayerInBattle(el);
 
       el.userData.inBattle = true;
+
+      let enemyPunch;
+    
+      if (!el.userData.enemyCanPunch) enemyPunch = new TWEEN.Tween({enemyPower: 0}).to( {enemyPower: el.userData.maxEnemyPower}, 1000).start().onUpdate(()=>{
+        //console.log('update');
+        el.userData.enemyCanPunch = true;
+      }).onComplete(()=>{
+        //console.log('complite');
+        playerClass.playerHealth -= el.userData.maxEnemyPower;
+        el.userData.enemyCanPunch = false;
+      })
+
       if (el.userData.health <= 0) {
         playerClass.playerInBattle = false;
         delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
         scene.remove( el );
-        this.enemies.splice(this.enemies.indexOf(el));
+        el.userData.dead = true;
+        console.log(123123);
       }
     }
     
