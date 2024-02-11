@@ -15,6 +15,10 @@ export class Player {
 
   playerInBattle = false;
   playerInBattleId = 0;
+  playerHealth = 120;
+  playerPower = 0;
+  maxplayerPower = 30;
+  playerCanPunch = false;
 
   
   
@@ -28,6 +32,7 @@ export class Player {
       for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
         if (worldMapClass.worldMap[i][j].player) {
           this.player.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+
         }
       }
     }
@@ -50,14 +55,17 @@ export class Player {
 
   }
 
-  setPlayerInBattle(id) {
+  setPlayerInBattle(enemy) {
     if (this.playerInBattle == false) {
       this.playerInBattle = true;
-      this.playerInBattleId = id;
+      this.playerInBattleId = enemy.id;
     }
   }
 
-  movePlayer(TWEEN) {
+  movePlayer(TWEEN, enemyClass) {
+
+    $('.player_health').text(this.playerHealth);
+    $('.enemy_health').text('');
 
     if (this.playerTouch) {
 
@@ -138,12 +146,46 @@ export class Player {
     }
 
     if (this.playerInBattle == true) {
-      this.playerNowBattle();
+      this.playerNowBattle(enemyClass);
     }
   
   }
 
-  playerNowBattle() {
-    console.log(`Бой с ${this.playerInBattleId}`);
+  playerNowBattle(enemyClass) {
+    //console.log(`Бой с ${this.playerInBattleId}`);
+    
+    
+    let enemyInBattle = enemyClass.enemies.find((el)=> el.id == this.playerInBattleId);
+      
+    $('.enemy_health').text(enemyInBattle.userData.health);
+
+    
+    let playerPunch;
+
+    if (!this.playerCanPunch) playerPunch = new TWEEN.Tween({playerPower: 0}).to( {playerPower: this.maxplayerPower}, 2000).start().onUpdate(()=>{
+      //console.log('update');
+      this.playerCanPunch = true;
+    }).onComplete(()=>{
+      //console.log('complite');
+      enemyInBattle.userData.health -= this.maxplayerPower;
+      this.playerCanPunch = false;
+    })
+
+    // playerPunch.start().onComplete(()=>{
+
+    //   this.playerCanPunch = true;
+      
+    //   playerPunch.playerPower = 0;
+
+    // }).onUpdate(()=>{
+
+    //   this.playerCanPunch = false;
+
+    // })
+
+
+    
+
+    
   }
 }

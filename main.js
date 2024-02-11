@@ -25,26 +25,30 @@ let scene = new THREE.Scene();
 //scene.fog = new THREE.Fog(0xffffff);
 scene.background = new THREE.Color( 0x444444 );
 
+let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1000);
+camera.position.set(50, -50, 200);
+camera.lookAt(50,-50,0);
+
 let renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(innerWidth, innerHeight);
+renderer.setSize($('.game').width(), $('.game').height());
 renderer.setClearColor(0xffffff)
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.gammaInput = true;
-document.body.appendChild(renderer.domElement);
+camera.aspect = $('.game').width() / $('.game').height();
+camera.updateProjectionMatrix();
+document.querySelector('.game').appendChild(renderer.domElement);
 window.addEventListener("resize", (event) => {
-  camera.aspect = innerWidth / innerHeight;
+  camera.aspect = $('.game').width() / $('.game').height();
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
+  renderer.setSize($('.game').width(), $('.game').height());
 });
 stats = new Stats();
-document.body.appendChild( stats.dom );
+$('.stats').append( stats.dom );
 
 
 
-let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1000);
-camera.position.set(50, -50, 300);
-camera.lookAt(50,-50,0);
+
 
 var ambient = new THREE.AmbientLight( 0xffffff, 0.1);
 
@@ -116,7 +120,7 @@ function init() {
   const testBlockMaterial = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 1 } );
   testBlock = new THREE.Mesh( testBlockGeometry, testBlockMaterial );
   
-  scene.add( testBlock );
+  //scene.add( testBlock );
   
  
 };
@@ -129,21 +133,21 @@ function animate( ) {
 
   
   //console.log(enemyClass.enemies[0].userData.inBattle);
-  playerClass.movePlayer(TWEEN);
+  playerClass.movePlayer(TWEEN, enemyClass);
 
-  enemyClass.idleEnemy(enemyClass.enemies, TWEEN, playerClass.player, playerClass);
+  enemyClass.idleEnemy(scene, enemyClass.enemies, TWEEN, playerClass.player, playerClass);
 
-  worldMapClass.worldMap.forEach((n, i) => {
-    n.forEach((b, j) => {
-        if (worldMapClass.worldMap[i][j].player) {
-          let testblock1 = testBlock.clone();
+  // worldMapClass.worldMap.forEach((n, i) => {
+  //   n.forEach((b, j) => {
+  //       if (worldMapClass.worldMap[i][j].player) {
+  //         let testblock1 = testBlock.clone();
           
-          testblock1.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
-          //console.log(`${i}---${j}`)
+  //         testblock1.position.set(worldMapClass.worldSettings.sizeOneBlock * j + worldMapClass.worldSettings.sizeOneBlock/2  , -worldMapClass.worldSettings.sizeOneBlock * i - worldMapClass.worldSettings.sizeOneBlock / 2,0);
+  //         //console.log(`${i}---${j}`)
           
-        }
-    });
-  });
+  //       }
+  //   });
+  // });
   
   
   //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
@@ -172,8 +176,8 @@ renderer.setAnimationLoop((_) => {
 
 
 function onDocumentMouseMove( event ) {
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    mouse.x = ( event.clientX / $('.game').width() ) * 2 - 1;
+    mouse.y = - ( event.clientY / $('.game').height() ) * 2 + 1;
     
     raycaster.setFromCamera( mouse, camera );
     
@@ -196,8 +200,8 @@ function onDocumentMouseMove( event ) {
 }
 function onDocumentMouseDown( event ) { 
   event.preventDefault();
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  mouse.x = ( event.clientX / $('.game').width() ) * 2 - 1;
+  mouse.y = - ( event.clientY / $('.game').height() ) * 2 + 1;
 
   raycaster.setFromCamera( mouse, camera );
     

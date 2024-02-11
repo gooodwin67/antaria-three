@@ -33,6 +33,7 @@ export class Enemy {
           newEnemy.userData.enemyTween = new TWEEN.Tween;
 
           newEnemy.userData.inBattle = false;
+          newEnemy.userData.health = 100;
 
 
           newEnemy.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
@@ -47,7 +48,7 @@ export class Enemy {
   
 
 
-  idleEnemy(enemies, TWEEN, player, playerClass) {
+  idleEnemy(scene, enemies, TWEEN, player, playerClass) {
     
     
 
@@ -88,13 +89,13 @@ export class Enemy {
 
           }
           else {
-            this.enemyIdle(el, TWEEN);
+            this.enemyIdle(scene, el, TWEEN);
           }
 
         }
         else {
           
-          this.runEnemyToPlayer(el, player, TWEEN, playerClass)
+          this.runEnemyToPlayer(scene, el, player, TWEEN, playerClass)
         }
 
       }
@@ -105,7 +106,7 @@ export class Enemy {
 
   }
 
-  enemyIdle(el, TWEEN) {
+  enemyIdle(scene, el, TWEEN) {
 
     el.userData.inBattle = false;
 
@@ -151,7 +152,7 @@ export class Enemy {
 
   }
 
-  runEnemyToPlayer(el, player, TWEEN, playerClass) {
+  runEnemyToPlayer(scene, el, player, TWEEN, playerClass) {
     
     var grid = new PF.Grid(worldMapClass.worldMap[0].length, worldMapClass.worldMap.length); 
       
@@ -210,8 +211,15 @@ export class Enemy {
     }
     else if (el.position.distanceTo(player.position) < 11) {
       
-      if (!el.userData.inBattle) playerClass.setPlayerInBattle(el.id);
+      if (!el.userData.inBattle) playerClass.setPlayerInBattle(el);
+
       el.userData.inBattle = true;
+      if (el.userData.health <= 0) {
+        playerClass.playerInBattle = false;
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        scene.remove( el );
+        this.enemies.splice(this.enemies.indexOf(el));
+      }
     }
     
 

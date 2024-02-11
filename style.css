@@ -1,0 +1,27 @@
+.game {
+    max-width: 600px;
+    max-height: 600px;
+    width: 100vh;
+    height: 100vh;
+    position: relative;
+}
+.game canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+.stats {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 70px;
+}
+.stats>div {
+    position: relative !important;
+}
+
+.top_block {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+}

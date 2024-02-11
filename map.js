@@ -40,6 +40,7 @@ export class WorldMapClass {
         sizeY: this.worldMap.length,
         sizeOneBlock: 10,
       }
+      
 
       loadingMap(THREE, scene) {
 
