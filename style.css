@@ -24,4 +24,55 @@
     width: 100%;
     top: 0;
     left: 0;
+    padding:5px;
+}
+.top_block>div {
+    width: 100px;
+    border: 1px solid #ccc;
+    height: 20px;
+    margin-bottom: 5px;
+    border-radius: 20px;
+    font-size: 12px;
+    position: relative;
+    background-color: black;
+    overflow: hidden;
+}
+.top_block .player_health_in {
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    border-radius: 20px;
+    position: absolute;
+    
+}
+.top_block .player_health_in_text {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-25%) translateY(-27%);;
+    color: white;
+}
+
+.top_block .enemy_health {
+    display: none;
+}
+
+.top_block .enemy_health_in {
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    border-radius: 20px;
+    position: absolute;
+    
+}
+.top_block .enemy_health_in_text {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-25%) translateY(-27%);
+    color: white;
 }

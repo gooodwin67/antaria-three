@@ -15,10 +15,12 @@ export class Player {
 
   playerInBattle = false;
   playerInBattleId = 0;
-  playerHealth = 120;
+  maxPlayerHealth = 120;
+  playerHealth = this.maxPlayerHealth;
   playerPower = 0;
   maxplayerPower = 30;
   playerCanPunch = false;
+  playerCanHealth = false;
 
   
   
@@ -64,8 +66,9 @@ export class Player {
 
   movePlayer(TWEEN, enemyClass) {
 
-    $('.player_health').text(this.playerHealth);
-    $('.enemy_health').text('');
+    $('.player_health_in_text').text(`${this.playerHealth} / ${this.maxPlayerHealth}`);
+    $('.player_health_in').css({'width':(this.playerHealth / this.maxPlayerHealth) * 100+'%'})
+    
 
     if (this.playerTouch) {
 
@@ -147,6 +150,20 @@ export class Player {
     
     if (this.playerInBattle == true) {
       this.playerNowBattle(enemyClass);
+    }
+    else {
+      
+      
+
+      if (this.playerCanHealth) new TWEEN.Tween({a: 0}).to( {b: 100}, 1000).start().onUpdate(()=>{
+        //console.log('update');
+        this.playerCanHealth = false;
+      }).onComplete(()=>{
+        //console.log('complite');
+        this.playerHealth += 10;
+        if (this.playerHealth>=this.maxPlayerHealth) this.playerHealth = this.maxPlayerHealth
+        else this.playerCanHealth = true;
+      })
       
     }
   
@@ -158,18 +175,19 @@ export class Player {
     
     let enemyInBattle = enemyClass.enemies.find((el)=> el.id == this.playerInBattleId);
     
-      
-    $('.enemy_health').text(enemyInBattle.userData.health);
+    $('.enemy_health_in_text').text(`${enemyInBattle.userData.health} / ${enemyInBattle.userData.maxHealth}`);
+    $('.enemy_health_in').css({'width':(enemyInBattle.userData.health / enemyInBattle.userData.maxHealth) * 100+'%'})
 
     
     let playerPunch;
     
-    if (!this.playerCanPunch) playerPunch = new TWEEN.Tween({playerPower: 0}).to( {playerPower: this.maxplayerPower}, 1000).start().onUpdate(()=>{
+    if (!this.playerCanPunch) playerPunch = new TWEEN.Tween({a: 0}).to( {b: 100}, 1000).start().onUpdate(()=>{
       //console.log('update');
       this.playerCanPunch = true;
     }).onComplete(()=>{
       //console.log('complite');
       enemyInBattle.userData.health -= this.maxplayerPower;
+      this.playerCanHealth = true;
       this.playerCanPunch = false;
     })
 

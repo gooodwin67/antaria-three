@@ -35,6 +35,7 @@ export class Enemy {
           newEnemy.userData.inBattle = false;
           newEnemy.userData.enemyCanPunch = false;
           newEnemy.userData.health = 100;
+          newEnemy.userData.maxHealth = 100;
 
           newEnemy.userData.enemyPower = 0;
           newEnemy.userData.maxEnemyPower = 5;
@@ -225,6 +226,7 @@ export class Enemy {
       el.userData.inBattle = true;
 
       let enemyPunch;
+      $('.enemy_health').fadeIn();
     
       if (!el.userData.enemyCanPunch) enemyPunch = new TWEEN.Tween({enemyPower: 0}).to( {enemyPower: el.userData.maxEnemyPower}, 1000).start().onUpdate(()=>{
         //console.log('update');
@@ -232,15 +234,16 @@ export class Enemy {
       }).onComplete(()=>{
         //console.log('complite');
         playerClass.playerHealth -= el.userData.maxEnemyPower;
+        playerClass.playerCanHealth = true;
         el.userData.enemyCanPunch = false;
       })
 
       if (el.userData.health <= 0) {
+        $('.enemy_health').fadeOut();
         playerClass.playerInBattle = false;
         delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
         scene.remove( el );
         el.userData.dead = true;
-        console.log(123123);
       }
     }
     

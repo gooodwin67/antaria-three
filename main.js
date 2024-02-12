@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 
 
-import { OrbitControls } from "three/addons/controls/OrbitControls";
+//import { OrbitControls } from "three/addons/controls/OrbitControls";
 
 import { WorldMapClass } from "./map.js"
 import { Player } from "./player.js"
@@ -64,9 +64,9 @@ light.distance = 300;
 
 scene.add( light );
 
-let controls = new OrbitControls(camera, renderer.domElement);
+//let controls = new OrbitControls(camera, renderer.domElement);
 //controls.enableDamping = true;
-controls.target.set(50, -50, 0);
+//controls.target.set(50, -50, 0);
 
 
 let plane;
@@ -151,7 +151,7 @@ function animate( ) {
   
   
   //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
-  controls.update();
+  //controls.update();
     
 };
 
