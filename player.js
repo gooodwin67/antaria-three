@@ -150,9 +150,10 @@ export class Player {
     
     if (this.playerInBattle == true) {
       this.playerNowBattle(enemyClass);
+      $('.enemy_health').fadeIn();
     }
     else {
-      
+      $('.enemy_health').fadeOut();
       
 
       if (this.playerCanHealth) new TWEEN.Tween({a: 0}).to( {b: 100}, 1000).start().onUpdate(()=>{

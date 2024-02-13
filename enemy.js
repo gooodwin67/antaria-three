@@ -27,6 +27,9 @@ export class Enemy {
           newEnemy.userData.time = 0;
           newEnemy.userData.clock = new THREE.Clock();
 
+          newEnemy.userData.timeToAlive = 5;
+          newEnemy.userData.timeDie = 0;
+
           newEnemy.userData.enemyCanRun = true;
           newEnemy.userData.enemyCanPath = false;
           newEnemy.userData.path = [];
@@ -36,14 +39,19 @@ export class Enemy {
           newEnemy.userData.enemyCanPunch = false;
           newEnemy.userData.health = 100;
           newEnemy.userData.maxHealth = 100;
+          newEnemy.userData.enemyCanHealth = false;
 
           newEnemy.userData.enemyPower = 0;
           newEnemy.userData.maxEnemyPower = 5;
 
           newEnemy.userData.dead = false;
 
+          newEnemy.userData.firstPosition = new THREE.Vector3(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
 
-          newEnemy.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+          newEnemy.userData.firstPositionOnMasMap = new THREE.Vector2(j , i);
+
+
+          newEnemy.position.set(newEnemy.userData.firstPosition.x, newEnemy.userData.firstPosition.y, newEnemy.userData.firstPosition.z);
           this.enemies.push(newEnemy);
           scene.add( newEnemy );
         }
@@ -60,6 +68,29 @@ export class Enemy {
 
 
     let livesEnemies = enemies.filter((el) => !el.userData.dead);
+    let deadEnemies = enemies.filter((el) => el.userData.dead);
+
+    deadEnemies.forEach(el => {
+      el.userData.timeDie += el.userData.delta;
+      
+
+      if (el.userData.timeDie > el.userData.timeToAlive && !worldMapClass.worldMap[el.userData.firstPositionOnMasMap.y][el.userData.firstPositionOnMasMap.x].enemy && !worldMapClass.worldMap[el.userData.firstPositionOnMasMap.y][el.userData.firstPositionOnMasMap.x].player) {
+        el.position.set(el.userData.firstPosition.x, el.userData.firstPosition.y, el.userData.firstPosition.z);
+        worldMapClass.worldMap[el.userData.firstPositionOnMasMap.y][el.userData.firstPositionOnMasMap.x].enemy = true;
+        scene.add( el );
+        el.userData.health = 100;
+        el.userData.dead = false;
+        el.userData.timeDie = 0;
+      }
+      else if ((el.userData.timeDie > el.userData.timeToAlive && worldMapClass.worldMap[el.userData.firstPositionOnMasMap.y][el.userData.firstPositionOnMasMap.x].enemy) || (el.userData.timeDie > el.userData.timeToAlive && worldMapClass.worldMap[el.userData.firstPositionOnMasMap.y][el.userData.firstPositionOnMasMap.x].player)) {
+        el.userData.timeDie = 0;
+      }
+      
+    })
+
+    
+        
+        
 
 
     livesEnemies.forEach(el => {
@@ -147,7 +178,13 @@ export class Enemy {
         delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
         
 
-        new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start()
+        new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start().onUpdate(()=>{
+          //el.userData.enemyCanHealth = false;
+        }).onComplete(()=>{
+          el.userData.health += 10;
+          if (el.userData.health>=el.userData.maxHealth) el.userData.health = el.userData.maxHealth
+          //else el.userData.enemyCanHealth = true;
+        })
 
         
 
@@ -226,7 +263,7 @@ export class Enemy {
       el.userData.inBattle = true;
 
       let enemyPunch;
-      $('.enemy_health').fadeIn();
+      
     
       if (!el.userData.enemyCanPunch) enemyPunch = new TWEEN.Tween({enemyPower: 0}).to( {enemyPower: el.userData.maxEnemyPower}, 1000).start().onUpdate(()=>{
         //console.log('update');
@@ -239,13 +276,15 @@ export class Enemy {
       })
 
       if (el.userData.health <= 0) {
-        $('.enemy_health').fadeOut();
+        
         playerClass.playerInBattle = false;
         delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
         scene.remove( el );
+        
         el.userData.dead = true;
       }
     }
+    
     
 
   }
