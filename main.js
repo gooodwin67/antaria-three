@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 
 
-//import { OrbitControls } from "three/addons/controls/OrbitControls";
+import { OrbitControls } from "three/addons/controls/OrbitControls";
 
 import { WorldMapClass } from "./map.js"
 import { Player } from "./player.js"
@@ -64,9 +64,9 @@ light.distance = 300;
 
 scene.add( light );
 
-//let controls = new OrbitControls(camera, renderer.domElement);
-//controls.enableDamping = true;
-//controls.target.set(50, -50, 0);
+let controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.target.set(50, -50, 0);
 
 
 let plane;
@@ -80,7 +80,7 @@ let dirTap; // след от мышки на карте
 
 
 
-function init() {
+async function init() {
     
   var geometryPlane = new THREE.BoxGeometry(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock, 1);
   var materialPlane = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide })
@@ -95,7 +95,7 @@ function init() {
   const gridHelper = new THREE.GridHelper( size, divisions );
   gridHelper.position.set(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock/2,-worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock/2,0.4);
   gridHelper.rotation.x = Math.PI/2;
-  scene.add( gridHelper );
+  //scene.add( gridHelper );
 
   const geometryDirTap = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeOneBlock, 1 );
   const materialDirTap = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 0 } );
@@ -106,7 +106,9 @@ function init() {
 
 
   
-  worldMapClass.loadingMap(THREE, scene); 
+  
+  
+  worldMapClass.loadingMap(THREE, scene);
   playerClass.addPlayer(scene);
   enemyClass.addEnemy(scene, TWEEN);
   
@@ -151,7 +153,7 @@ function animate( ) {
   
   
   //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
-  //controls.update();
+  controls.update();
     
 };
 
