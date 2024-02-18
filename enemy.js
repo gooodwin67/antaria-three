@@ -4,13 +4,13 @@ import { randomIntFromInterval } from "./functions.js";
 import { worldMapClass } from "./main.js";
 
 export class Enemy {
-  geometryEnemy = new THREE.BoxGeometry( 4, 4, 5 );
+  geometryEnemy = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock/1.5, worldMapClass.worldSettings.sizeOneBlock/1.5, 5 );
   materialEnemy = new THREE.MeshPhongMaterial( { color: 0x000000 } );
   enemy = new THREE.Mesh( this.geometryEnemy, this.materialEnemy );
   enemies = [];
   
 
-  distanceToWatchPlayer = 50;
+  distanceToWatchPlayer = worldMapClass.worldSettings.sizeOneBlock*5;
   
 
   
@@ -115,7 +115,7 @@ export class Enemy {
               });
             });
 
-            el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
+            el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(player.position.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(player.position.y/worldMapClass.worldSettings.sizeOneBlock)), grid);
             
             if (el.userData.path.length == 0) {
               
@@ -153,8 +153,8 @@ export class Enemy {
       
       el.userData.path = [];
 
-      let yPos = Math.trunc(Math.abs(el.position.y/10));
-      let xPos = Math.trunc(Math.abs(el.position.x/10));
+      let yPos = Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock));
+      let xPos = Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock));
       
       if (worldMapClass.worldMap[yPos][xPos-1].map == 'g' && !worldMapClass.worldMap[yPos][xPos-1].player && !worldMapClass.worldMap[yPos][xPos-1].enemy) {
         masNewPos.push([xPos-1, yPos]);
@@ -175,7 +175,7 @@ export class Enemy {
 
       if (masNewPos.length>0) {
 
-        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock))].enemy;
         
 
         new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start().onUpdate(()=>{
@@ -216,11 +216,11 @@ export class Enemy {
 
     
     
-    if (el.userData.enemyCanRun && el.position.distanceTo(player.position) > 11) {
+    if (el.userData.enemyCanRun && el.position.distanceTo(player.position) > worldMapClass.worldSettings.sizeOneBlock+1) {
       
       el.userData.inBattle = false;
       
-      el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/10)), Math.trunc(Math.abs(el.position.y/10)), Math.trunc(Math.abs(player.position.x/10)), Math.trunc(Math.abs(player.position.y/10)), grid);
+      el.userData.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(player.position.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(player.position.y/worldMapClass.worldSettings.sizeOneBlock)), grid);
 
       if (el.userData.path.length == 0) el.userData.enemyCanPath = false;
 
@@ -232,7 +232,7 @@ export class Enemy {
 
         
 
-        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock))].enemy;
 
         el.userData.enemyTween = new TWEEN.Tween(el.position).to( { x: el.userData.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -el.userData.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, 1000);
 
@@ -256,7 +256,7 @@ export class Enemy {
       
       
     }
-    else if (el.position.distanceTo(player.position) < 11) {
+    else if (el.position.distanceTo(player.position) < worldMapClass.worldSettings.sizeOneBlock+1) {
       
       if (!el.userData.inBattle) playerClass.setPlayerInBattle(el);
 
@@ -278,7 +278,7 @@ export class Enemy {
       if (el.userData.health <= 0) {
         
         playerClass.playerInBattle = false;
-        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/10))][Math.trunc(Math.abs(el.position.x/10))].enemy;
+        delete worldMapClass.worldMap[Math.trunc(Math.abs(el.position.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(el.position.x/worldMapClass.worldSettings.sizeOneBlock))].enemy;
         scene.remove( el );
         
         el.userData.dead = true;

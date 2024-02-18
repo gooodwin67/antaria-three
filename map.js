@@ -7,7 +7,7 @@ export class WorldMapClass {
 
   worldMap = [
     [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
-    [{map:'0'},{map:'g', player: true},{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
+    [{map:'0'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'0'}],
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
@@ -17,6 +17,11 @@ export class WorldMapClass {
     [{map:'0'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'g'},{map:'0'}],
     [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
   ]
+
+
+  worldMap = [];
+
+
   // worldMap = [
   //   [{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'},{map:'0'}],
   //   [{map:'0'},{map:'g'},{map:'0'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'g', enemy: true},{map:'g'},{map:'0'}],
@@ -39,30 +44,26 @@ export class WorldMapClass {
 
       
       worldSettings = {
-        sizeX: this.worldMap[0].length, 
-        sizeY: this.worldMap.length,
-        sizeOneBlock: 10,
+        sizeX: 11, 
+        sizeY: 11,
+        sizeOneBlock: 32,
       }
 
-      tree = 0;
-
+      mapIsLoaded = false;
       
 
       
 
-      loading3D(THREE, scene) {
-        var loader3D = new GLTFLoader();
-        let tree = this.tree;
-        let IsLoaded3D = this.IsLoaded3D;
-        tree = 2;
+      async loading3DMap(THREE, scene) {
 
-        loader3D.load(
+        var loader3DMap = new GLTFLoader();
+
+        await loader3DMap.loadAsync(
           
-          'assets/models/tree.gltf',
-          function ( gltf) {
-            
-            gltf.scene.scale.set(3,3,3);
-            gltf.scene.position.set(50,-50,0);
+          'assets/map/map.gltf'
+          ).then((gltf)=>{
+            gltf.scene.scale.set(this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2);
+            gltf.scene.position.set(this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,-this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,0);
             
             
             gltf.animations; // Array<THREE.AnimationClip>
@@ -71,94 +72,132 @@ export class WorldMapClass {
             gltf.cameras; // Array<THREE.Camera>
             gltf.asset; // Object
 
+            let map = gltf.scene;
+            map.rotation.x = Math.PI/2
             
-            
-            tree = gltf.scene;
-            tree.rotation.x = Math.PI/2
 
-            scene.add( tree );
-            
-            console.log(tree);
 
             
-            
-            
-           
-      
-            
-            // playerAll.traverse( function ( child ) {
+            // map.traverse( function ( child ) {
             //   if ( child.isMesh ) {
             //     child.castShadow = true;
+            //     child.receiveShadow = true;
             //   }
             // } );
-            
-            
-          
-          },
-          // called while loading is progressing
-          function ( xhr ) {
-            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-          },
-          // called when loading has errors
-          function ( error ) {
-            console.log( 'An error happened' );
-          }
-      
-      
-        );
+
+            scene.add( map );
+
+            this.loadingMap(THREE, scene, map);
+          })
+
       }
 
       
+
+      
+
       
       
-
-      loadingMap(THREE, scene) {
-
-        
-
-        
-
-        let tree = this.tree;
-        console.log(this.tree);
-
-        //console.log(tree);
-
-        let geometry = new THREE.BoxGeometry( this.worldSettings.sizeOneBlock, this.worldSettings.sizeOneBlock, 0.2 ); 
       
-        const loadMngr = new THREE.LoadingManager();
-        const loader = new TextureLoader(loadMngr);
-      
-        let grassTexture = loader.load('assets/map/grass/grass1.png');
+
+      loadingMap(THREE, scene, map) {
+
         
-        let wallTexture = loader.load('assets/map/ground/ground1.png');
-        
+        let sizeMapMas = map.children.filter((res)=>{
+          return res.name.includes('map');
+        })
 
         
         
-      
-        loadMngr.onLoad = () => {
-          let grassMaterial = new THREE.MeshBasicMaterial( { map: grassTexture} );
-          let grass = new THREE.Mesh( geometry, grassMaterial );
-      
-          let wallMaterial = new THREE.MeshBasicMaterial( { map: wallTexture } );
-          let wall = new THREE.Mesh( geometry, wallMaterial );
-      
-      
-          for (let i = 0; i < this.worldSettings.sizeX; i++) {
-            for (let j = 0; j < this.worldSettings.sizeY; j++) {
-              if (this.worldMap[i][j].map == 'g') {
-                let grassClone = grass.clone();
-                grassClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
-                scene.add( grassClone );      
-              }
-              else if (this.worldMap[i][j].map == '0') {
-                let wallClone = wall.clone();
-                wallClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
-                scene.add( wallClone );      
-              }
-            } 
+        let worldMapNew = [...Array(11)].map(e => Array(Math.sqrt(sizeMapMas.length)));
+        for (var i = 0; i< Math.sqrt(sizeMapMas.length); i++) {
+          for (var j = 0; j< Math.sqrt(sizeMapMas.length); j++) {
+            worldMapNew[i][j] = 0;
+          }  
+        }        
+
+        
+        console.log(worldMapNew);
+        
+        let ii = 0;
+        
+        for (let i = 0; i < map.children.length; i++) {
+
+          if (map.children[i].name.includes('wall058')) {
+            console.log(Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock)));
+            console.log(Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock)));
           }
-      
+          
+          let xBlock = Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock))
+          let yBlock = Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock))
+
+          
+          
+
+          if (map.children[i].name.includes('wall')) {
+            // console.log(yBlock);
+            // console.log(xBlock);
+            worldMapNew[yBlock][xBlock] = {map:'0'}
+            ii++;
+            
+          }
+          else if (map.children[i].name.includes('ground') || map.children[i].name.includes('grass')) {
+            worldMapNew[yBlock][xBlock] = {map:'g'}
+          }
+          if (map.children[i].name.includes('player')) {
+            worldMapNew[yBlock][xBlock].player = true;
+          }
+          
         }
+
+        // console.log(this.worldMap);
+        
+        // this.worldMap = worldMapNew;
+        // this.mapIsLoaded = true;
+
+
+
+
+
+
+
+        // let geometry = new THREE.BoxGeometry( this.worldSettings.sizeOneBlock, this.worldSettings.sizeOneBlock, 0.2 ); 
+      
+        // const loadMngr = new THREE.LoadingManager();
+        // const loader = new TextureLoader(loadMngr);
+      
+        // let grassTexture = loader.load('assets/map/grass/grass1.png');
+        
+        // let wallTexture = loader.load('assets/map/ground/ground1.png');
+        
+
+        
+        
+      
+        // loadMngr.onLoad = () => {
+        //   let grassMaterial = new THREE.MeshBasicMaterial( { map: grassTexture} );
+        //   let grass = new THREE.Mesh( geometry, grassMaterial );
+      
+        //   let wallMaterial = new THREE.MeshBasicMaterial( { map: wallTexture } );
+        //   let wall = new THREE.Mesh( geometry, wallMaterial );
+      
+      
+        //   for (let i = 0; i < this.worldSettings.sizeX; i++) {
+        //     for (let j = 0; j < this.worldSettings.sizeY; j++) {
+        //       if (this.worldMap[i][j].map == 'g') {
+        //         let grassClone = grass.clone();
+        //         grassClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
+        //         scene.add( grassClone );      
+        //       }
+        //       else if (this.worldMap[i][j].map == '0') {
+        //         let wallClone = wall.clone();
+                
+        //         wallClone.position.set(this.worldSettings.sizeOneBlock * j + this.worldSettings.sizeOneBlock/2  , -this.worldSettings.sizeOneBlock * i - this.worldSettings.sizeOneBlock / 2,0.2);
+        //         scene.add( wallClone );      
+        //       }
+        //     } 
+        //   }
+      
+        // }
     }
 }

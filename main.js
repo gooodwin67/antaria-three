@@ -25,9 +25,9 @@ let scene = new THREE.Scene();
 //scene.fog = new THREE.Fog(0xffffff);
 scene.background = new THREE.Color( 0x444444 );
 
-let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1000);
-camera.position.set(50, -50, 200);
-camera.lookAt(50,-50,0);
+let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1300);
+camera.position.set(50, -50, 1000);
+//camera.lookAt(50,-50,0);
 
 let renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize($('.game').width(), $('.game').height());
@@ -48,18 +48,21 @@ $('.stats').append( stats.dom );
 
 
 
+export let worldMapClass = new WorldMapClass();
+let playerClass = new Player();
+let enemyClass = new Enemy();
 
 
-var ambient = new THREE.AmbientLight( 0xffffff, 0.1);
+
+var ambient = new THREE.AmbientLight( 0xffffff, 1);
 
 scene.add( ambient )
 
-let light = new THREE.SpotLight( 0xffffff, 1 );
-light.position.set(0,0, 100);
-light.penumbra = 1;
-light.power = 2;
+let light = new THREE.PointLight( 0xffffff, 1 );
+//light.position.set(playerClass.player.position.x,playerClass.player.position.y, 100);
+light.penumbra = 2;
+light.power = 10;
 light.decay = 2;
-light.distance = 300;
 
 
 scene.add( light );
@@ -71,9 +74,7 @@ controls.target.set(50, -50, 0);
 
 let plane;
 
-export let worldMapClass = new WorldMapClass();
-let playerClass = new Player();
-let enemyClass = new Enemy();
+
 
 let dirTap; // след от мышки на карте
 
@@ -81,36 +82,51 @@ let dirTap; // след от мышки на карте
 
 
 async function init() {
+
+  worldMapClass.loading3DMap(THREE, scene).then(()=>{
+
+    if (worldMapClass.mapIsLoaded) {
+
+      
     
-  var geometryPlane = new THREE.BoxGeometry(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock, 1);
-  var materialPlane = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide })
-  plane = new THREE.Mesh ( geometryPlane, materialPlane );
-  plane.receiveShadow = true;
-  plane.position.set(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock/2,-worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock/2,-1);
+      var geometryPlane = new THREE.BoxGeometry(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock, 1);
+      var materialPlane = new THREE.MeshPhongMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+      plane = new THREE.Mesh ( geometryPlane, materialPlane );
+      plane.receiveShadow = true;
+      plane.position.set(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock/2,-worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock/2,-1);
+      
+      scene.add( plane );
+
+      const size = worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock;
+      const divisions = worldMapClass.worldSettings.sizeX;
+      const gridHelper = new THREE.GridHelper( size, divisions );
+      gridHelper.position.set(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock/2,-worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock/2,0.4);
+      gridHelper.rotation.x = Math.PI/2;
+      //scene.add( gridHelper );
+
+      const geometryDirTap = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeOneBlock, 1 );
+      const materialDirTap = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 0 } );
+      dirTap = new THREE.Mesh( geometryDirTap, materialDirTap );
+      dirTap.position.set(worldMapClass.worldSettings.sizeOneBlock+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock-worldMapClass.worldSettings.sizeOneBlock/2,0);
+      scene.add( dirTap );
+
+
+
   
-  scene.add( plane );
+  
+    
+      playerClass.addPlayer(scene, worldMapClass);
+      //enemyClass.addEnemy(scene, TWEEN);
 
-  const size = worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock;
-  const divisions = worldMapClass.worldSettings.sizeX;
-  const gridHelper = new THREE.GridHelper( size, divisions );
-  gridHelper.position.set(worldMapClass.worldSettings.sizeX*worldMapClass.worldSettings.sizeOneBlock/2,-worldMapClass.worldSettings.sizeY*worldMapClass.worldSettings.sizeOneBlock/2,0.4);
-  gridHelper.rotation.x = Math.PI/2;
-  //scene.add( gridHelper );
-
-  const geometryDirTap = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock, worldMapClass.worldSettings.sizeOneBlock, 1 );
-  const materialDirTap = new THREE.MeshBasicMaterial( { color: 0xffff00, transparent: true, opacity: 0 } );
-  dirTap = new THREE.Mesh( geometryDirTap, materialDirTap );
-  dirTap.position.set(worldMapClass.worldSettings.sizeOneBlock+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock-worldMapClass.worldSettings.sizeOneBlock/2,0);
-  scene.add( dirTap );
-
-
-
+      document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+      document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+    }
+  })
+  //worldMapClass.loading3D(THREE, scene)
+  //worldMapClass.loadingMap(THREE, scene);
   
   
   
-  worldMapClass.loadingMap(THREE, scene);
-  playerClass.addPlayer(scene);
-  enemyClass.addEnemy(scene, TWEEN);
   
 
   // enemyClass.idleEnemy(enemyClass.enemies);
@@ -152,16 +168,19 @@ function animate( ) {
   // });
   
   
-  //console.log(enemyClass.enemy.position.distanceTo(playerClass.player.position));
+  
   controls.update();
+  // camera.position.set(playerClass.player.position.x, playerClass.player.position.y-300, camera.position.z)
+  // camera.lookAt(playerClass.player.position);
+  light.position.set(playerClass.player.position.x,playerClass.player.position.y, 200);
+
     
 };
 
 /*///////////////////////////////////////////////////////////////////*/
 
 $('.btn1').click(function() {console.log(1)});
-document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
 
 /*///////////////////////////////////////////////////////////////////*/
 
@@ -193,8 +212,8 @@ function onDocumentMouseMove( event ) {
     if (intersects) {
       // console.log(Math.trunc(Math.abs(player.position.x/10)));
       dirTap.material.opacity = 0.1;
-      dirTap.position.x = Math.trunc(Math.abs(intersects.x/10)) * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
-      dirTap.position.y = -Math.trunc(Math.abs(intersects.y/10)) * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2;
+      dirTap.position.x = Math.trunc(Math.abs(intersects.x/worldMapClass.worldSettings.sizeOneBlock)) * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2;
+      dirTap.position.y = -Math.trunc(Math.abs(intersects.y/worldMapClass.worldSettings.sizeOneBlock)) * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2;
     }
     else {
       dirTap.material.opacity = 0;

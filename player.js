@@ -5,7 +5,7 @@ import { TWEEN } from './libs/tween.module.min.js';
 
 
 export class Player {
-  geometryPlayer = new THREE.BoxGeometry( 4, 4, 5 );
+  geometryPlayer = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock/1.5, worldMapClass.worldSettings.sizeOneBlock/1.5, 5 );
   materialPlayer = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
   player = new THREE.Mesh;
   playerRuninig = false;
@@ -28,10 +28,12 @@ export class Player {
   path = [];
   ii = 1;
 
-  addPlayer (scene){
+  addPlayer (scene, worldMapClass){
+    console.log(worldMapClass.worldMap[0][9]);
     this.player = new THREE.Mesh( this.geometryPlayer, this.materialPlayer );
     for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
       for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
+        //console.log(worldMapClass.worldMap[i][j])
         if (worldMapClass.worldMap[i][j].player) {
           this.player.position.set(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
 
@@ -83,8 +85,8 @@ export class Player {
         });
       });
 
-      if (!worldMapClass.worldMap[Math.trunc(Math.abs(this.intersects.y/10))][Math.trunc(Math.abs(this.intersects.x/10))].enemy) {
-        this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/10)), Math.trunc(Math.abs(this.player.position.y/10)), Math.trunc(Math.abs(this.intersects.x/10)), Math.trunc(Math.abs(this.intersects.y/10)), grid);
+      if (!worldMapClass.worldMap[Math.trunc(Math.abs(this.intersects.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(this.intersects.x/worldMapClass.worldSettings.sizeOneBlock))].enemy) {
+        this.path = new PF.AStarFinder().findPath(Math.trunc(Math.abs(this.player.position.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(this.player.position.y/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(this.intersects.x/worldMapClass.worldSettings.sizeOneBlock)), Math.trunc(Math.abs(this.intersects.y/worldMapClass.worldSettings.sizeOneBlock)), grid);
       }
       
 
@@ -113,7 +115,7 @@ export class Player {
         
         this.playerTween.start().onComplete(()=>{
           
-          worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/10))][Math.trunc(Math.abs(this.player.position.x/10))].player = true;
+          worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(this.player.position.x/worldMapClass.worldSettings.sizeOneBlock))].player = true;
           if (!worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
 
           this.playerInBattle = false;
