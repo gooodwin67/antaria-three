@@ -44,8 +44,8 @@ export class WorldMapClass {
 
       
       worldSettings = {
-        sizeX: 11, 
-        sizeY: 11,
+        sizeX: 13, 
+        sizeY: 13,
         sizeOneBlock: 32,
       }
 
@@ -63,7 +63,7 @@ export class WorldMapClass {
           'assets/map/map.gltf'
           ).then((gltf)=>{
             gltf.scene.scale.set(this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2);
-            gltf.scene.position.set(this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,-this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,0);
+            //gltf.scene.position.set(this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,-this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,0);
             
             
             gltf.animations; // Array<THREE.AnimationClip>
@@ -109,7 +109,8 @@ export class WorldMapClass {
 
         
         
-        let worldMapNew = [...Array(11)].map(e => Array(Math.sqrt(sizeMapMas.length)));
+        let worldMapNew = [...Array(13)].map(e => Array(13));
+        console.log(worldMapNew);
         for (var i = 0; i< Math.sqrt(sizeMapMas.length); i++) {
           for (var j = 0; j< Math.sqrt(sizeMapMas.length); j++) {
             worldMapNew[i][j] = 0;
@@ -117,28 +118,28 @@ export class WorldMapClass {
         }        
 
         
-        console.log(worldMapNew);
         
-        let ii = 0;
+        
+        
         
         for (let i = 0; i < map.children.length; i++) {
 
-          if (map.children[i].name.includes('wall058')) {
-            console.log(Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock)));
-            console.log(Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock)));
+          if (map.children[i].name.includes('wall027')) {
+            console.log(Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2-1) / this.worldSettings.sizeOneBlock)));
+            console.log(Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2+1) / this.worldSettings.sizeOneBlock)));
+            
           }
           
-          let xBlock = Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock))
-          let yBlock = Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2) / this.worldSettings.sizeOneBlock))
+          let xBlock = Math.round(Math.abs((map.children[i].getWorldPosition(new THREE.Vector3()).x + this.worldSettings.sizeOneBlock/2-1) / this.worldSettings.sizeOneBlock))-1
+          let yBlock = Math.round(Math.abs((-map.children[i].getWorldPosition(new THREE.Vector3()).y - this.worldSettings.sizeOneBlock/2+1) / this.worldSettings.sizeOneBlock))
 
           
           
 
           if (map.children[i].name.includes('wall')) {
-            // console.log(yBlock);
-            // console.log(xBlock);
             worldMapNew[yBlock][xBlock] = {map:'0'}
-            ii++;
+            
+            
             
           }
           else if (map.children[i].name.includes('ground') || map.children[i].name.includes('grass')) {
@@ -147,13 +148,16 @@ export class WorldMapClass {
           if (map.children[i].name.includes('player')) {
             worldMapNew[yBlock][xBlock].player = true;
           }
+          if (map.children[i].name.includes('enemy')) {
+            worldMapNew[yBlock][xBlock].enemy = true;
+          }
           
         }
 
         // console.log(this.worldMap);
         
-        // this.worldMap = worldMapNew;
-        // this.mapIsLoaded = true;
+        this.worldMap = worldMapNew;
+        this.mapIsLoaded = true;
 
 
 
