@@ -22,11 +22,17 @@ let raycaster = new THREE.Raycaster();
 let testBlock;
 
 let scene = new THREE.Scene();
-//scene.fog = new THREE.Fog(0xffffff);
-scene.background = new THREE.Color( 0x444444 );
+// scene.fog = new THREE.Fog(0xffffff);
+scene.background = new THREE.Color( 0x000000 );
+
+
+
+
+
+
 
 let camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 1300);
-camera.position.set(50, -50, 1000);
+camera.position.set(50, -50, 300);
 //camera.lookAt(50,-50,0);
 
 let renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -54,9 +60,10 @@ let enemyClass = new Enemy();
 
 
 
-var ambient = new THREE.AmbientLight( 0xffffff, 1);
+scene.add( new THREE.AmbientLight( 0x666666, 3 ) );
 
-scene.add( ambient )
+
+
 
 let light = new THREE.PointLight( 0xffffff, 1 );
 //light.position.set(playerClass.player.position.x,playerClass.player.position.y, 100);
@@ -116,7 +123,7 @@ async function init() {
   
     
       playerClass.addPlayer(scene, worldMapClass);
-      //enemyClass.addEnemy(scene, TWEEN);
+      enemyClass.addEnemy(scene, TWEEN);
 
       document.addEventListener( 'mousemove', onDocumentMouseMove, false );
       document.addEventListener( 'mousedown', onDocumentMouseDown, false );

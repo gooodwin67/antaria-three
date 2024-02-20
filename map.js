@@ -46,7 +46,7 @@ export class WorldMapClass {
       worldSettings = {
         sizeX: 13, 
         sizeY: 13,
-        sizeOneBlock: 32,
+        sizeOneBlock: 16,
       }
 
       mapIsLoaded = false;
