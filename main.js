@@ -65,6 +65,7 @@ scene.add( new THREE.AmbientLight( 0x666666, 3 ) );
 
 
 
+
 let light = new THREE.PointLight( 0xffffff, 1 );
 //light.position.set(playerClass.player.position.x,playerClass.player.position.y, 100);
 light.penumbra = 2;

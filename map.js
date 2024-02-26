@@ -60,7 +60,7 @@ export class WorldMapClass {
 
         await loader3DMap.loadAsync(
           
-          'assets/map/map.gltf'
+          'assets/map/map_test.gltf'
           ).then((gltf)=>{
             gltf.scene.scale.set(this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2, this.worldSettings.sizeOneBlock/2);
             //gltf.scene.position.set(this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,-this.worldSettings.sizeX/2*this.worldSettings.sizeOneBlock,0);
@@ -73,7 +73,7 @@ export class WorldMapClass {
             gltf.asset; // Object
 
             let map = gltf.scene;
-            map.rotation.x = Math.PI/2
+            map.rotation.x = Math.PI/2;
             
 
 
