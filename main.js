@@ -156,9 +156,13 @@ init();
 /*///////////////////////////////////////////////////////////////////*/
 
 function animate( ) {
-
+  if (playerClass.playerLoaded) {
+    playerClass.player.allAnimations[0].play();
+    console.log(playerClass.player.allAnimations);////////////////////////////////БЛЛЛЯЯЯЯ))
+    playerClass.playerLoaded = false;
+  }
   
-  //console.log(enemyClass.enemies[0].userData.inBattle);
+  
   playerClass.movePlayer(TWEEN, enemyClass);
 
   enemyClass.idleEnemy(scene, enemyClass.enemies, TWEEN, playerClass.player, playerClass);
