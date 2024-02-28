@@ -156,16 +156,22 @@ init();
 /*///////////////////////////////////////////////////////////////////*/
 
 function animate( ) {
-  if (playerClass.playerLoaded) {
-    playerClass.player.allAnimations[0].play();
-    console.log(playerClass.player.allAnimations);////////////////////////////////БЛЛЛЯЯЯЯ))
-    playerClass.playerLoaded = false;
-  }
+  
   
   
   playerClass.movePlayer(TWEEN, enemyClass);
 
   enemyClass.idleEnemy(scene, enemyClass.enemies, TWEEN, playerClass.player, playerClass);
+
+
+  
+  if (playerClass.playerLoaded) {
+    if ( playerClass.player.children[1].mixers.length > 0 ) {
+      for ( var i = 0; i < playerClass.player.children[1].mixers.length; i ++ ) {
+        playerClass.player.children[1].mixers[ i ].update( playerClass.player.children[1].clock.getDelta() );
+      }
+    } 
+  }
 
   // worldMapClass.worldMap.forEach((n, i) => {
   //   n.forEach((b, j) => {

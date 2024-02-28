@@ -9,6 +9,7 @@ export class Player {
   geometryPlayer = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock/5, worldMapClass.worldSettings.sizeOneBlock/5, 5 );
   materialPlayer = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
   player = new THREE.Group();
+  player3D;
   playerLoaded = false;
   playerRuninig = false;
   playerCanRun = false;
@@ -33,6 +34,7 @@ export class Player {
   async addPlayer (scene, worldMapClass) {
    
     var playerMesh = new THREE.Mesh( this.geometryPlayer, this.materialPlayer );
+    playerMesh.position.set(0,5,0);
     for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
       for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
         if (worldMapClass.worldMap[i][j].player) {
@@ -43,11 +45,11 @@ export class Player {
     this.player.add(playerMesh);
     scene.add( this.player );
 
-    var player3D;
+    
 
     var loader = new GLTFLoader();
       await loader.loadAsync(
-        'assets/models/player/player.gltf').then(( gltf ) =>{
+        'assets/models/player/player1.gltf').then(( gltf ) =>{
           
           gltf.scene.scale.set(10,10,10);
           
@@ -59,16 +61,16 @@ export class Player {
     
           gltf.scene.animations = gltf.animations;
           
-          player3D = gltf.scene;
+          this.player3D = gltf.scene;
     
-          player3D.rotation.x = Math.PI/2;
+          this.player3D.rotation.x = Math.PI/2;
+
+          this.player3D.up.set(0,0,1);
 
           
-
-          
           
 
-          this.player.add(player3D);
+          this.player.add(this.player3D);
     
           
           // playerAll.traverse( function ( child ) {
@@ -76,19 +78,20 @@ export class Player {
           //     child.castShadow = true;
           //   }
           // } );
-          player3D.mixer = new THREE.AnimationMixer( player3D );
-          player3D.mixers = [];
+          this.player3D.mixer = new THREE.AnimationMixer( this.player3D );
+          this.player3D.mixers = [];
           this.player.allAnimations= [];
-          player3D.mixers.push( player3D.mixer );
+          this.player3D.mixers.push( this.player3D.mixer );
+          this.player3D.clock = new THREE.Clock();
           
           
           
-          //console.log(player3D)
+          //console.log(this.player3D)
     
-          this.player.allAnimations.push(player3D.userData.animationWalk = player3D.mixer.clipAction( player3D.animations[0]));
-          player3D.userData.animationWalk.timeScale = 0.5;
+          this.player.allAnimations.push(this.player.userData.animationWalk = this.player3D.mixer.clipAction( this.player3D.animations[0]));
+          this.player.userData.animationWalk.timeScale = 0.5;
 
-          //player3D.userData.animationWalk.play();
+          //this.player.userData.animationWalk.play();
           // allAnimations.push(player.userData.animations.actionRunForward = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_forward')));
     
           // allAnimations.push(player.userData.animations.actionRunRight = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_right')));
@@ -177,6 +180,7 @@ export class Player {
       
     }
     
+    
       
     if (this.playerCanRun && !this.playerTween.isPlaying()) {
       
@@ -202,6 +206,11 @@ export class Player {
 
           this.playerInBattle = false;
           this.playerInBattleID = 0;
+
+          this.player.userData.animationWalk.stop();
+          //this.player3D.lookAt(pla);
+          
+          
           
           
           
@@ -220,12 +229,17 @@ export class Player {
           this.playerRuninig = true;
           this.playerCanRun = false;
           worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
+          this.player.userData.animationWalk.play();
+          
+          //this.player3D.up.set(0,0,1);
+          //if (this.path.length > 0) this.player3D.lookAt(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,-this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,0);
+          console.log(this.player3D.rotation.x)
+          
           
         });
 
       }
       else {
-
         this.playerRuninig = false;
         
       }
