@@ -10,6 +10,7 @@ export class Player {
   materialPlayer = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
   player = new THREE.Group();
   player3D;
+  player3DRotation = [];
   playerLoaded = false;
   playerRuninig = false;
   playerCanRun = false;
@@ -49,7 +50,7 @@ export class Player {
 
     var loader = new GLTFLoader();
       await loader.loadAsync(
-        'assets/models/player/player1.gltf').then(( gltf ) =>{
+        'assets/models/player/player.gltf').then(( gltf ) =>{
           
           gltf.scene.scale.set(10,10,10);
           
@@ -153,6 +154,8 @@ export class Player {
 
   movePlayer(TWEEN, enemyClass) {
 
+    // console.log(this.player3DRotation);
+
     $('.player_health_in_text').text(`${this.playerHealth} / ${this.maxPlayerHealth}`);
     $('.player_health_in').css({'width':(this.playerHealth / this.maxPlayerHealth) * 100+'%'})
     
@@ -207,8 +210,14 @@ export class Player {
           this.playerInBattle = false;
           this.playerInBattleID = 0;
 
-          this.player.userData.animationWalk.stop();
-          //this.player3D.lookAt(pla);
+          
+          
+
+          console.log(this.player3DRotation[0])
+          this.player3D.setRotationFromEuler(this.player3DRotation[0]);
+
+          this.player3DRotation = []
+          
           
           
           
@@ -221,7 +230,8 @@ export class Player {
             this.player.position.set(backPosition[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, -backPosition[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2, 0);
             delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
             worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
-            this.playerCanRun = false;
+            this.player.userData.animationWalk.stop();
+            this.playerRuninig = false;
           }
         }).onUpdate(()=>{
           
@@ -232,14 +242,21 @@ export class Player {
           this.player.userData.animationWalk.play();
           
           //this.player3D.up.set(0,0,1);
-          //if (this.path.length > 0) this.player3D.lookAt(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,-this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,0);
-          console.log(this.player3D.rotation.x)
+          if (this.path.length > 0) this.player3D.lookAt(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,-this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,0);
+
+          // if (this.player3DRotation.length < 10) this.player3DRotation.push(this.player3D.clone().rotation);
+          // else this.player3DRotation = [];
+          this.player3DRotation.push(this.player3D.clone().rotation);
+          
+          
+          //console.log(this.player3D.rotation)
           
           
         });
 
       }
       else {
+        this.player.userData.animationWalk.stop();
         this.playerRuninig = false;
         
       }
