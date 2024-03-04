@@ -92,7 +92,11 @@ export class Player {
           this.player.allAnimations.push(this.player.userData.animationWalk = this.player3D.mixer.clipAction( this.player3D.animations[0]));
           this.player.userData.animationWalk.timeScale = 0.5;
 
-          //this.player.userData.animationWalk.play();
+          //this.player.allAnimations.push(this.player.userData.animationIdle = this.player3D.mixer.clipAction( this.player3D.animations[1]));
+          //this.player.userData.animationIdle.timeScale = 0.5;
+          console.log(this.player3D)
+
+          //this.player.userData.animationIdle.play();
           // allAnimations.push(player.userData.animations.actionRunForward = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_forward')));
     
           // allAnimations.push(player.userData.animations.actionRunRight = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_right')));
@@ -213,7 +217,7 @@ export class Player {
           
           
 
-          console.log(this.player3DRotation[0])
+          //console.log(this.player3DRotation[0])
           this.player3D.setRotationFromEuler(this.player3DRotation[0]);
 
           this.player3DRotation = []
@@ -232,6 +236,7 @@ export class Player {
             worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
             this.player.userData.animationWalk.stop();
             this.playerRuninig = false;
+            this.playerCanRun = false;
           }
         }).onUpdate(()=>{
           
