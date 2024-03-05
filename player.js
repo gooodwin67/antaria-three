@@ -50,7 +50,7 @@ export class Player {
 
     var loader = new GLTFLoader();
       await loader.loadAsync(
-        'assets/models/player/player.gltf').then(( gltf ) =>{
+        'assets/models/player/player5.gltf').then(( gltf ) =>{
           
           gltf.scene.scale.set(10,10,10);
           
@@ -89,14 +89,20 @@ export class Player {
           
           //console.log(this.player3D)
     
-          this.player.allAnimations.push(this.player.userData.animationWalk = this.player3D.mixer.clipAction( this.player3D.animations[0]));
+          this.player.allAnimations.push(this.player.userData.animationWalk = this.player3D.mixer.clipAction( this.player3D.animations[2]));
           this.player.userData.animationWalk.timeScale = 0.5;
 
-          //this.player.allAnimations.push(this.player.userData.animationIdle = this.player3D.mixer.clipAction( this.player3D.animations[1]));
-          //this.player.userData.animationIdle.timeScale = 0.5;
+          this.player.allAnimations.push(this.player.userData.animationIdle = this.player3D.mixer.clipAction( this.player3D.animations[1]));
+          this.player.userData.animationIdle.timeScale = 0.5;
+
+          this.player.allAnimations.push(this.player.userData.animationHit = this.player3D.mixer.clipAction( this.player3D.animations[0]));
+          this.player.userData.animationHit.timeScale = 0.5;
+          
+
+
           console.log(this.player3D)
 
-          //this.player.userData.animationIdle.play();
+          this.player.userData.animationIdle.play();
           // allAnimations.push(player.userData.animations.actionRunForward = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_forward')));
     
           // allAnimations.push(player.userData.animations.actionRunRight = playerAll.mixer.clipAction( playerAll.animations.find(el=>el.name==='run_right')));
@@ -206,7 +212,7 @@ export class Player {
 
         delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
         
-        this.playerTween.start().onComplete(()=>{
+        if (!this.playerRuninig && !worldMapClass.worldMap[this.path[1][1]][this.path[1][0]].enemy) this.playerTween.start().onComplete(()=>{
           
           worldMapClass.worldMap[Math.trunc(Math.abs(this.player.position.y/worldMapClass.worldSettings.sizeOneBlock))][Math.trunc(Math.abs(this.player.position.x/worldMapClass.worldSettings.sizeOneBlock))].player = true;
           if (!worldMapClass.worldMap[newPosition[1]][newPosition[0]].enemy) worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
@@ -235,6 +241,7 @@ export class Player {
             delete worldMapClass.worldMap[backPosition[1]][backPosition[0]].player
             worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
             this.player.userData.animationWalk.stop();
+            this.player.userData.animationIdle.play();
             this.playerRuninig = false;
             this.playerCanRun = false;
           }
@@ -244,7 +251,9 @@ export class Player {
           this.playerRuninig = true;
           this.playerCanRun = false;
           worldMapClass.worldMap[newPosition[1]][newPosition[0]].player = true;
+          this.player.userData.animationIdle.stop();
           this.player.userData.animationWalk.play();
+          this.player.userData.animationHit.stop();
           
           //this.player3D.up.set(0,0,1);
           if (this.path.length > 0) this.player3D.lookAt(this.path[1][0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2,-this.path[1][1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2,0);
@@ -262,6 +271,8 @@ export class Player {
       }
       else {
         this.player.userData.animationWalk.stop();
+        
+        this.player.userData.animationIdle.play();
         this.playerRuninig = false;
         
       }
@@ -270,17 +281,21 @@ export class Player {
     
     if (this.playerInBattle == true) {
       this.playerNowBattle(enemyClass);
+      this.player.userData.animationHit.play();
+      this.player.userData.animationWalk.stop();
+      this.player.userData.animationIdle.stop();
       $('.enemy_health').fadeIn();
     }
     else {
       $('.enemy_health').fadeOut();
+      
       
 
       if (this.playerCanHealth) new TWEEN.Tween({a: 0}).to( {b: 100}, 1000).start().onUpdate(()=>{
         //console.log('update');
         this.playerCanHealth = false;
       }).onComplete(()=>{
-        //console.log('complite');
+        this.player.userData.animationHit.stop();
         this.playerHealth += 10;
         if (this.playerHealth>=this.maxPlayerHealth) this.playerHealth = this.maxPlayerHealth
         else this.playerCanHealth = true;
@@ -295,6 +310,8 @@ export class Player {
     
     
     let enemyInBattle = enemyClass.enemies.find((el)=> el.id == this.playerInBattleId);
+
+    this.player3D.lookAt(enemyInBattle.position);
     
     $('.enemy_health_in_text').text(`${enemyInBattle.userData.health} / ${enemyInBattle.userData.maxHealth}`);
     $('.enemy_health_in').css({'width':(enemyInBattle.userData.health / enemyInBattle.userData.maxHealth) * 100+'%'})
