@@ -259,7 +259,7 @@ export class Player {
 
           
           
-          if (!this.player.userData.animationWalk.isRunning() && !this.playerInBattle) this.fadeToAction(this.player.userData.animationWalk, 0.4);
+          if (!this.player.userData.animationWalk.isRunning() && !this.playerInBattle) this.fadeToAction(this.player.userData.animationWalk, 0.1);
           
 
           
@@ -280,7 +280,7 @@ export class Player {
       }
       else {
         
-        if (!this.player.userData.animationIdle.isRunning() && !this.playerInBattle) this.fadeToAction(this.player.userData.animationIdle, 0.4);
+        if (!this.player.userData.animationIdle.isRunning() && !this.playerInBattle) this.fadeToAction(this.player.userData.animationIdle, 0.1);
         
 
         this.playerRuninig = false;
@@ -296,7 +296,7 @@ export class Player {
       // this.player.userData.animationWalk.stop();
       // this.player.userData.animationIdle.stop();
 
-      if (!this.player.userData.animationHit.isRunning() ) this.fadeToAction(this.player.userData.animationHit, 0.4);
+      if (!this.player.userData.animationHit.isRunning() ) this.fadeToAction(this.player.userData.animationHit, 0.1);
 
       $('.enemy_health').fadeIn();
     }
