@@ -3,10 +3,14 @@ import * as THREE from 'three';
 import { randomIntFromInterval } from "./functions.js";
 import { worldMapClass } from "./main.js";
 
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
 export class Enemy {
   geometryEnemy = new THREE.BoxGeometry( worldMapClass.worldSettings.sizeOneBlock/1.5, worldMapClass.worldSettings.sizeOneBlock/1.5, 5 );
   materialEnemy = new THREE.MeshPhongMaterial( { color: 0x000000 } );
-  enemy = new THREE.Mesh( this.geometryEnemy, this.materialEnemy );
+  enemy = new THREE.Group();
+  enemy3D = new THREE.Mesh( this.geometryEnemy, this.materialEnemy );
   enemies = [];
   
 
@@ -15,48 +19,90 @@ export class Enemy {
 
   
 
-  addEnemy (scene, TWEEN){
+  async addEnemy (scene, TWEEN, worldMapClass){
 
-    for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
-      for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
-        if (worldMapClass.worldMap[i][j].enemy) {
-          let newEnemy = this.enemy.clone();
+    var loader = new GLTFLoader();
+    await loader.loadAsync(
+      'assets/models/player/player6.gltf').then(( gltf ) =>{
+        
+        gltf.animations; // Array<THREE.AnimationClip>
+        gltf.scene; // THREE.Scene
+        gltf.scenes; // Array<THREE.Scene>
+        gltf.cameras; // Array<THREE.Camera>
+        gltf.asset; // Object
+  
+        gltf.scene.animations = gltf.animations;
+        
+        this.enemy3D = gltf.scene;
+  
+        this.enemy3D.rotation.x = Math.PI/2;
 
-          newEnemy.userData.speed = 2+Math.random();
-          newEnemy.userData.delta = 0;
-          newEnemy.userData.time = 0;
-          newEnemy.userData.clock = new THREE.Clock();
+        this.enemy3D.scale.set(10,10,10);
 
-          newEnemy.userData.timeToAlive = 5;
-          newEnemy.userData.timeDie = 0;
+        this.enemy3D.up.set(0,0,1);
 
-          newEnemy.userData.enemyCanRun = true;
-          newEnemy.userData.enemyCanPath = false;
-          newEnemy.userData.path = [];
-          newEnemy.userData.enemyTween = new TWEEN.Tween;
+        
 
-          newEnemy.userData.inBattle = false;
-          newEnemy.userData.enemyCanPunch = false;
-          newEnemy.userData.health = 100;
-          newEnemy.userData.maxHealth = 100;
-          newEnemy.userData.enemyCanHealth = false;
+        this.enemy.add(this.enemy3D);
 
-          newEnemy.userData.enemyPower = 0;
-          newEnemy.userData.maxEnemyPower = 5;
+    
 
-          newEnemy.userData.dead = false;
+      for (let i = 0; i < worldMapClass.worldSettings.sizeX; i++) {
+        for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
+          if (worldMapClass.worldMap[i][j].enemy) {
 
-          newEnemy.userData.firstPosition = new THREE.Vector3(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+            let newEnemy = this.enemy.clone();
 
-          newEnemy.userData.firstPositionOnMasMap = new THREE.Vector2(j , i);
+            newEnemy.rotation.x = -Math.PI/2;
+
+            newEnemy.scale.set(0.1,0.1,0.1);
+
+            newEnemy.up.set(0,0,1);
+
+            console.log(newEnemy);
+
+            newEnemy.children[0].add(SkeletonUtils.clone(this.enemy3D));
+
+            newEnemy.userData.speed = 2+Math.random();
+            newEnemy.userData.delta = 0;
+            newEnemy.userData.time = 0;
+            newEnemy.userData.clock = new THREE.Clock();
+
+            newEnemy.userData.timeToAlive = 5;
+            newEnemy.userData.timeDie = 0;
+
+            newEnemy.userData.enemyCanRun = true;
+            newEnemy.userData.enemyCanPath = false;
+            newEnemy.userData.path = [];
+            newEnemy.userData.enemyTween = new TWEEN.Tween;
+
+            newEnemy.userData.inBattle = false;
+            newEnemy.userData.enemyCanPunch = false;
+            newEnemy.userData.health = 100;
+            newEnemy.userData.maxHealth = 100;
+            newEnemy.userData.enemyCanHealth = false;
+
+            newEnemy.userData.enemyPower = 0;
+            newEnemy.userData.maxEnemyPower = 5;
+
+            newEnemy.userData.dead = false;
+
+            newEnemy.userData.firstPosition = new THREE.Vector3(worldMapClass.worldSettings.sizeOneBlock*j+worldMapClass.worldSettings.sizeOneBlock/2 ,-worldMapClass.worldSettings.sizeOneBlock*i-worldMapClass.worldSettings.sizeOneBlock/2,0);
+
+            newEnemy.userData.firstPositionOnMasMap = new THREE.Vector2(j , i);
 
 
-          newEnemy.position.set(newEnemy.userData.firstPosition.x, newEnemy.userData.firstPosition.y, newEnemy.userData.firstPosition.z);
-          this.enemies.push(newEnemy);
-          scene.add( newEnemy );
+            newEnemy.position.set(newEnemy.userData.firstPosition.x, newEnemy.userData.firstPosition.y, newEnemy.userData.firstPosition.z);
+            this.enemies.push(newEnemy);
+            scene.add( newEnemy );
+          }
         }
       }
-    }
+
+
+
+
+    });
         
   }
 

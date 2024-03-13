@@ -124,7 +124,7 @@ async function init() {
   
     
       playerClass.addPlayer(scene, worldMapClass);
-      enemyClass.addEnemy(scene, TWEEN);
+      enemyClass.addEnemy(scene, TWEEN, worldMapClass);
 
       document.addEventListener( 'mousemove', onDocumentMouseMove, false );
       document.addEventListener( 'mousedown', onDocumentMouseDown, false );

@@ -103,7 +103,7 @@ export class Player {
           
 
 
-          console.log(this.player3D)
+          
 
           this.activeAction = this.player.userData.animationIdle;
           this.activeAction.play();
