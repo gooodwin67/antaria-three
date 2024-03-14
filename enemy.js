@@ -15,9 +15,9 @@ export class Enemy {
   
 
   distanceToWatchPlayer = worldMapClass.worldSettings.sizeOneBlock*5;
-  
 
   
+    
 
   async addEnemy (scene, TWEEN, worldMapClass){
 
@@ -39,8 +39,6 @@ export class Enemy {
 
         this.enemy3D.scale.set(10,10,10);
 
-        this.enemy3D.up.set(0,0,1);
-
         
 
         this.enemy.add(this.enemy3D);
@@ -51,7 +49,7 @@ export class Enemy {
         for (let j = 0; j < worldMapClass.worldSettings.sizeY; j++) {
           if (worldMapClass.worldMap[i][j].enemy) {
 
-            let newEnemy = this.enemy.clone();
+            let newEnemy = SkeletonUtils.clone(this.enemy);
 
             newEnemy.rotation.x = -Math.PI/2;
 
@@ -59,7 +57,7 @@ export class Enemy {
 
             newEnemy.up.set(0,0,1);
 
-            console.log(newEnemy);
+            
 
             newEnemy.children[0].add(SkeletonUtils.clone(this.enemy3D));
 
@@ -225,7 +223,8 @@ export class Enemy {
         
 
         new TWEEN.Tween(el.position).to( { x: newPath[0] * worldMapClass.worldSettings.sizeOneBlock + worldMapClass.worldSettings.sizeOneBlock/2, y: -newPath[1] * worldMapClass.worldSettings.sizeOneBlock - worldMapClass.worldSettings.sizeOneBlock/2 }, (el.userData.speed-1)*1000).start().onUpdate(()=>{
-          //el.userData.enemyCanHealth = false;
+          
+
         }).onComplete(()=>{
           el.userData.health += 10;
           if (el.userData.health>=el.userData.maxHealth) el.userData.health = el.userData.maxHealth
